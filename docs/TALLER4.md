@@ -6,7 +6,17 @@ Integrante: Nell16 (trabajo individual).
 ## 1. Propuesta de base de datos (unificada)
 
 Base de datos PostgreSQL (script completo: `backend/supabase/migrations/20260621000100_create_bfa_schema.sql`).
-El diagrama muestra las tablas principales; `PK` = clave primaria, `FK` = clave foránea.
+Se presenta en tres bloques para que se lea bien; `PK` = clave primaria, `FK` = clave foránea.
+
+Esquema general de los tres bloques (cada flecha indica qué bloque alimenta a cuál):
+
+```mermaid
+flowchart LR
+    A["Bloque A<br/>Accesos, catálogos<br/>y participantes"] --> C["Bloque C<br/>Aplicación, respuestas<br/>y resultados"]
+    B["Bloque B<br/>Instrumentos<br/>(test, ítems, baremos)"] --> C
+```
+
+### Bloque A. Accesos, catálogos y participantes
 
 ```mermaid
 erDiagram
@@ -14,38 +24,11 @@ erDiagram
     ROL ||--o{ USUARIO_ROL : "asignado en"
     ROL ||--o{ ROL_PERMISO : "otorga"
     PERMISO ||--o{ ROL_PERMISO : "pertenece a"
-
     CARRERA ||--o{ GRUPO_ACADEMICO : "tiene"
     CARRERA ||--o{ PARTICIPANTE : "cursa"
     CATALOGO_SEXO ||--o{ PARTICIPANTE : "clasifica"
     COHORTE ||--o{ PARTICIPANTE : "pertenece"
     GRUPO_ACADEMICO ||--o{ PARTICIPANTE : "agrupa"
-
-    TEST ||--o{ VERSION_TEST : "tiene versiones"
-    VERSION_TEST ||--o{ SUBTEST : "contiene"
-    VERSION_TEST ||--o{ DIMENSION_RESULTADO : "define"
-    VERSION_TEST ||--o{ BAREMO : "usa"
-    SUBTEST ||--o{ ITEM : "contiene"
-    ITEM ||--o{ OPCION_ITEM : "ofrece"
-    ITEM ||--o{ IMAGEN_ITEM : "muestra"
-    RECURSO_MULTIMEDIA ||--o{ IMAGEN_ITEM : "almacena"
-    VERSION_TEST ||--o{ REGLA_CALIFICACION : "califica con"
-    REGLA_CALIFICACION ||--o{ CLAVE_RESPUESTA : "define"
-    BAREMO ||--o{ RANGO_BAREMO : "tiene"
-
-    VERSION_TEST ||--o{ SESION_APLICACION : "se aplica en"
-    SESION_APLICACION ||--o{ SESION_SUBTEST : "habilita"
-    SESION_APLICACION ||--o{ ASIGNACION_TEST : "asigna"
-    PARTICIPANTE ||--o{ ASIGNACION_TEST : "recibe"
-    USUARIO ||--o{ ASIGNACION_TEST : "evalua"
-    ASIGNACION_TEST ||--|| INTENTO_TEST : "genera"
-    INTENTO_TEST ||--o{ INTENTO_SUBTEST : "incluye"
-    INTENTO_TEST ||--o{ RESPUESTA_ITEM : "registra"
-    ITEM ||--o{ RESPUESTA_ITEM : "responde"
-    INTENTO_TEST ||--|| RESULTADO : "produce"
-    RESULTADO ||--o{ RESULTADO_DIMENSION : "detalla"
-    DIMENSION_RESULTADO ||--o{ RESULTADO_DIMENSION : "mide"
-    RESPUESTA_ITEM ||--o{ REVISION_MANUAL_RESPUESTA : "revisa"
     USUARIO ||--o{ AUDITORIA : "genera"
 
     USUARIO {
@@ -102,6 +85,31 @@ erDiagram
         smallint cohorte_id FK
         smallint grupo_academico_id FK
     }
+    AUDITORIA {
+        bigint auditoria_id PK
+        uuid usuario_id FK
+        varchar accion
+        varchar entidad
+        jsonb valor_nuevo
+    }
+```
+
+### Bloque B. Instrumentos (tests, ítems, calificación y baremos)
+
+```mermaid
+erDiagram
+    TEST ||--o{ VERSION_TEST : "tiene versiones"
+    VERSION_TEST ||--o{ SUBTEST : "contiene"
+    VERSION_TEST ||--o{ DIMENSION_RESULTADO : "define"
+    VERSION_TEST ||--o{ BAREMO : "usa"
+    SUBTEST ||--o{ ITEM : "contiene"
+    ITEM ||--o{ OPCION_ITEM : "ofrece"
+    ITEM ||--o{ IMAGEN_ITEM : "muestra"
+    RECURSO_MULTIMEDIA ||--o{ IMAGEN_ITEM : "almacena"
+    VERSION_TEST ||--o{ REGLA_CALIFICACION : "califica con"
+    REGLA_CALIFICACION ||--o{ CLAVE_RESPUESTA : "define"
+    BAREMO ||--o{ RANGO_BAREMO : "tiene"
+
     TEST {
         bigint test_id PK
         varchar codigo_test
@@ -181,6 +189,34 @@ erDiagram
         decimal percentil
         varchar categoria
     }
+```
+
+### Bloque C. Aplicación, respuestas y resultados
+
+```mermaid
+erDiagram
+    VERSION_TEST ||--o{ DIMENSION_RESULTADO : "define"
+    VERSION_TEST ||--o{ SESION_APLICACION : "se aplica en"
+    SESION_APLICACION ||--o{ SESION_SUBTEST : "habilita"
+    SESION_APLICACION ||--o{ ASIGNACION_TEST : "asigna"
+    PARTICIPANTE ||--o{ ASIGNACION_TEST : "recibe"
+    USUARIO ||--o{ ASIGNACION_TEST : "evalua"
+    ASIGNACION_TEST ||--|| INTENTO_TEST : "genera"
+    INTENTO_TEST ||--o{ INTENTO_SUBTEST : "incluye"
+    INTENTO_TEST ||--o{ RESPUESTA_ITEM : "registra"
+    ITEM ||--o{ RESPUESTA_ITEM : "responde"
+    INTENTO_TEST ||--|| RESULTADO : "produce"
+    RESULTADO ||--o{ RESULTADO_DIMENSION : "detalla"
+    DIMENSION_RESULTADO ||--o{ RESULTADO_DIMENSION : "mide"
+    RESPUESTA_ITEM ||--o{ REVISION_MANUAL_RESPUESTA : "revisa"
+
+    VERSION_TEST {
+        bigint version_test_id PK
+        bigint test_id FK
+        varchar numero_version
+        enum estado
+        int tiempo_limite_segundos
+    }
     SESION_APLICACION {
         bigint sesion_aplicacion_id PK
         bigint version_test_id FK
@@ -199,6 +235,25 @@ erDiagram
         uuid participante_id FK
         uuid evaluador_id FK
         varchar token_acceso_hash
+        enum estado
+    }
+    PARTICIPANTE {
+        uuid participante_id PK
+        varchar codigo_participante
+        varchar nombres
+        varchar apellidos
+        date fecha_nacimiento
+        smallint sexo_id FK
+        smallint carrera_id FK
+        smallint cohorte_id FK
+        smallint grupo_academico_id FK
+    }
+    USUARIO {
+        uuid usuario_id PK
+        varchar nombre_usuario
+        varchar correo
+        varchar hash_contrasena
+        varchar nombre_completo
         enum estado
     }
     INTENTO_TEST {
@@ -221,6 +276,14 @@ erDiagram
         numeric respuesta_numerica
         timestamp respondido_en
     }
+    ITEM {
+        bigint item_id PK
+        bigint subtest_id FK
+        varchar codigo_item
+        enum tipo_item
+        int numero_orden
+        decimal puntaje_base
+    }
     RESULTADO {
         bigint resultado_id PK
         bigint intento_id FK
@@ -236,6 +299,12 @@ erDiagram
         decimal percentil
         varchar categoria
     }
+    DIMENSION_RESULTADO {
+        bigint dimension_resultado_id PK
+        bigint version_test_id FK
+        bigint subtest_id FK
+        varchar nombre_dimension
+    }
     REVISION_MANUAL_RESPUESTA {
         bigint revision_manual_respuesta_id PK
         bigint respuesta_id FK
@@ -243,14 +312,8 @@ erDiagram
         decimal puntaje_asignado
         uuid revisado_por FK
     }
-    AUDITORIA {
-        bigint auditoria_id PK
-        uuid usuario_id FK
-        varchar accion
-        varchar entidad
-        jsonb valor_nuevo
-    }
 ```
+
 
 ### Cómo el diseño respalda la API
 
