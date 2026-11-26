@@ -431,25 +431,34 @@
             "type": "text/javascript",
             "exec": [
               "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
-              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });"
+              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });",
+              "const d = pm.response.json().data;",
+              "const lista = Array.isArray(d) ? d : ((d && (d.content || d.items)) || []);",
+              "if (lista.length && lista[0].id !== undefined) { pm.collectionVariables.set('sessionId', String(lista[0].id)); }"
             ]
           }
         }
       ]
     },
     {
-      "name": "11. Dashboard general",
+      "name": "11. Dashboard de una sesion (requiere sessionId)",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/dashboard/overview",
+          "raw": "{{baseUrl}}/dashboard/overview?sessionId={{sessionId}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "dashboard",
             "overview"
+          ],
+          "query": [
+            {
+              "key": "sessionId",
+              "value": "{{sessionId}}"
+            }
           ]
         },
         "auth": {
@@ -469,8 +478,12 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
-              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });"
+              "if (!pm.collectionVariables.get('sessionId')) {",
+              "  pm.test.skip('Omitida: aun no hay sesiones de aplicacion creadas');",
+              "} else {",
+              "  pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
+              "  pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });",
+              "}"
             ]
           }
         }
@@ -530,6 +543,10 @@
     },
     {
       "key": "token",
+      "value": ""
+    },
+    {
+      "key": "sessionId",
       "value": ""
     }
   ]
