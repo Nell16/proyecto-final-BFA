@@ -1,0 +1,536 @@
+{
+  "info": {
+    "name": "BFA Digital - API",
+    "description": "Coleccion del Taller 4. Poner la contrasena en la variable adminPassword (no se guarda en el repositorio). Ejecutar primero 1. Login.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Login (obtiene el token)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{adminUser}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });",
+              "const d = pm.response.json().data;",
+              "pm.test('Trae accessToken, tokenType y permissions', function () { pm.expect(d).to.have.property('accessToken'); pm.expect(d.tokenType).to.eql('Bearer'); pm.expect(d.permissions).to.be.an('array'); });",
+              "pm.collectionVariables.set('token', d.accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Perfil del usuario autenticado",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "me"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Listar roles",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/roles",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "roles"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Listar usuarios",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/users",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Listar carreras",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/catalogos/carreras",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "catalogos",
+            "carreras"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Crear carrera",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/catalogos/carreras",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "catalogos",
+            "carreras"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"codigoCarrera\": \"PSI-{{$randomInt}}\",\n  \"nombreCarrera\": \"Psicologia (prueba)\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Listar participantes (paginado)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/participantes?page=0&size=10",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "participantes"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "10"
+            }
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Crear participante",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/participantes",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "participantes"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"EST-{{$randomInt}}\",\n  \"firstNames\": \"Ana\",\n  \"lastNames\": \"Prueba\",\n  \"fechaNacimiento\": \"2002-05-14\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Listar tests (instrumentos)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/tests",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "tests"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Listar sesiones de aplicacion",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/sesiones",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "sesiones"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Dashboard general",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/dashboard/overview",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "dashboard",
+            "overview"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. Auditoria",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/auditoria",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auditoria"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://bfa-api-m03x.onrender.com"
+    },
+    {
+      "key": "adminUser",
+      "value": "admin"
+    },
+    {
+      "key": "adminPassword",
+      "value": ""
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}
