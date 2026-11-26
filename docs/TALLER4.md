@@ -292,22 +292,21 @@ Decisiones clave: las versiones de test son inmutables una vez publicadas (un ca
 | 17 | Auditoría | `/auditoria` | auditoria | Completada |
 | 18 | Respaldo y recuperación | `/backups` | respaldos | En desarrollo (la restauración solo registra la solicitud) |
 | 19 | Búsqueda y notificaciones | `/search`, `/notifications` | admin-layout | Completada |
-| 20 | Publicación de la API, Swagger y colección Postman | springdoc incluido | n/a | Pendiente |
+| 20 | Publicación de la API y documentación en Swagger UI | Render + Supabase, 103 operaciones documentadas | n/a | Completada |
 
-**Avance: 17 de 20 completadas = 85 %.**
+**Avance: 18 de 20 completadas = 90 %.**
 
 ## 3. Evidencias
 
-- Repositorio: <pegar URL del repositorio unificado>
-- API publicada: <pegar URL una vez desplegada>
-- Swagger UI: `<URL de la API>/swagger-ui.html` (springdoc ya está en `pom.xml`)
+- Repositorio: https://github.com/Nell16/proyecto-final-BFA
+- API publicada: https://bfa-api-m03x.onrender.com
+- Swagger UI: https://bfa-api-m03x.onrender.com/swagger-ui.html
 - Captura Postman: <adjuntar, probando la URL publicada>
 
 ## 4. Tareas pendientes y responsables
 
 | Tarea | Responsable |
 |---|---|
-| Desplegar el backend y la base de datos y compartir la URL | <asignar> |
 | Desplegar el frontend apuntando a la API publicada (`VITE_API_URL`) | <asignar> |
 | Crear la colección Postman con login y las operaciones principales | <asignar> |
 | Verificar en Postman que códigos de estado y estructura coinciden con Swagger | <asignar> |
