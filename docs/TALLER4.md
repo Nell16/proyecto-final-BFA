@@ -1,7 +1,7 @@
 # Taller 4 – Revisión de avances BFA Digital
 
 Repositorio unificado: `backend/` (Spring Boot + PostgreSQL/Supabase) y `frontend/` (React + Vite).
-Equipo: Gabriel Pérez, Silvio Mora, Christopher Ibarra.
+Integrante: Nell16 (trabajo individual).
 
 ## 1. Propuesta de base de datos (unificada)
 
@@ -317,8 +317,7 @@ Decisiones clave: las versiones de test son inmutables una vez publicadas (un ca
 
 | Tarea | Responsable |
 |---|---|
-| Crear la colección Postman con login y las operaciones principales | <asignar> |
-| Verificar en Postman que códigos de estado y estructura coinciden con Swagger | <asignar> |
-| Terminar la generación de reportes PDF / Excel / CSV | <asignar> |
-| Implementar la restauración real de respaldos | <asignar> |
-| Revisar pruebas automáticas y datos semilla para la demostración | <asignar> |
+| Terminar la generación de reportes PDF / Excel / CSV | Nell16 |
+| Implementar la restauración real de respaldos | Nell16 |
+| Revisar pruebas automáticas y datos semilla para la demostración | Nell16 |
+| Evitar que la API gratuita se duerma antes de la revisión (primera petición tarda ~30 s) | Nell16 |
