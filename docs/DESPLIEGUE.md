@@ -15,6 +15,7 @@
 | BFA_STORAGE_S3_REGION | Región del proyecto |
 | BFA_STORAGE_S3_BUCKET | `images` |
 | BFA_STORAGE_S3_ACCESS_KEY / BFA_STORAGE_S3_SECRET_KEY | Llaves S3 de Supabase |
+| BFA_CORS_ORIGINS | Origenes permitidos separados por coma (URL del frontend publicado) |
 | BFA_BOOTSTRAP_ADMIN_USERNAME / _EMAIL / _PASSWORD | Crea el primer administrador al iniciar |
 
 Los valores secretos no se guardan en el repositorio.
