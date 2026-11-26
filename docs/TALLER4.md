@@ -383,4 +383,4 @@ Decisiones clave: las versiones de test son inmutables una vez publicadas (un ca
 | Terminar la generación de reportes PDF / Excel / CSV | Nell16 |
 | Implementar la restauración real de respaldos | Nell16 |
 | Revisar pruebas automáticas y datos semilla para la demostración | Nell16 |
-| Evitar que la API gratuita se duerma antes de la revisión (primera petición tarda ~30 s) | Nell16 |
+| Evitar que la API gratuita se duerma antes de la revisión (el arranque en frío tarda de 2 a 3 minutos) | Nell16 |

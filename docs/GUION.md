@@ -1,8 +1,8 @@
 # Guion para presentar el Taller 4 (30 puntos)
 
-## Antes de presentar (5 a 10 minutos antes)
+## Antes de presentar (10 minutos antes)
 
-1. Abre https://bfa-api-m03x.onrender.com/swagger-ui.html y espera a que cargue. El plan gratuito duerme la API tras ~15 min sin uso y la primera petición tarda ~30 s.
+1. Abre https://bfa-api-m03x.onrender.com/swagger-ui.html y espera a que cargue. El plan gratuito duerme la API tras ~15 min sin uso y el arranque en frío tarda de 2 a 3 minutos.
 2. Abre `docs/TALLER4.md` en GitHub (el diagrama ER se dibuja solo).
 3. Abre Postman, importa `docs/postman/BFA-API.postman_collection.json` y escribe tu contraseña en la variable `adminPassword`. No la compartas en pantalla.
 4. Ten abierto el frontend: https://proyecto-final-bfa.vercel.app
@@ -45,7 +45,7 @@
 
 | Síntoma | Qué hacer |
 |---|---|
-| La API tarda mucho o devuelve 503 | Está despertando; espera ~30 a 60 s y repite |
+| La API tarda mucho o devuelve 503 | Está despertando; el arranque en frío tarda 2 a 3 minutos. Espera y repite |
 | El frontend se queda cargando | Es la misma causa; abre Swagger y espera a que cargue |
 | Postman da 401 en todo | Ejecuta primero la petición 1 (Login) y revisa `adminPassword` |
 | Swagger no abre | Prueba https://bfa-api-m03x.onrender.com/swagger-ui/index.html |
