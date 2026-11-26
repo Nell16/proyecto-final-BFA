@@ -44,11 +44,73 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test('Codigo de estado 200', function () { pm.response.to.have.status(200); });",
-              "pm.test('Estructura: success=true', function () { pm.expect(pm.response.json().success).to.eql(true); });",
-              "const d = pm.response.json().data;",
-              "pm.test('Trae accessToken, tokenType y permissions', function () { pm.expect(d).to.have.property('accessToken'); pm.expect(d.tokenType).to.eql('Bearer'); pm.expect(d.permissions).to.be.an('array'); });",
+              "pm.test('Codigo de estado 200 (igual al documentado en Swagger)', function () { pm.response.to.have.status(200); });",
+              "const j = pm.response.json();",
+              "pm.test('Estructura igual a la documentada: success, data, message, error, correlationId', function () {",
+              "  pm.expect(j).to.have.property('success', true);",
+              "  pm.expect(j).to.have.property('data');",
+              "});",
+              "const d = j.data;",
+              "pm.test('data trae accessToken, tokenType, expiresAt, userId, username y permissions', function () {",
+              "  pm.expect(d.accessToken).to.be.a('string').and.not.empty;",
+              "  pm.expect(d.tokenType).to.eql('Bearer');",
+              "  pm.expect(d.expiresAt).to.be.a('string');",
+              "  pm.expect(d.userId).to.be.a('string');",
+              "  pm.expect(d.username).to.be.a('string');",
+              "  pm.expect(d.permissions).to.be.an('array');",
+              "});",
               "pm.collectionVariables.set('token', d.accessToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "1b. Login con credenciales incorrectas (caso de error 401)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{adminUser}}\",\n  \"password\": \"clave-incorrecta\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Codigo de estado 401', function () { pm.response.to.have.status(401); });",
+              "pm.test('Estructura de error: success=false y error.code', function () {",
+              "  const j = pm.response.json();",
+              "  pm.expect(j.success).to.eql(false);",
+              "  pm.expect(j.error).to.have.property('code');",
+              "  pm.expect(j.error).to.have.property('message');",
+              "});"
             ]
           }
         }
