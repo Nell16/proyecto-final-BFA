@@ -300,6 +300,7 @@ Decisiones clave: las versiones de test son inmutables una vez publicadas (un ca
 
 - Repositorio: https://github.com/Nell16/proyecto-final-BFA
 - API publicada: https://bfa-api-m03x.onrender.com
+- Frontend publicado: https://proyecto-final-bfa.vercel.app
 - Swagger UI: https://bfa-api-m03x.onrender.com/swagger-ui.html
 - Colección Postman (importable): `docs/postman/BFA-API.postman_collection.json`
 - Login en Swagger UI con la URL publicada (credenciales tapadas):
@@ -316,7 +317,6 @@ Decisiones clave: las versiones de test son inmutables una vez publicadas (un ca
 
 | Tarea | Responsable |
 |---|---|
-| Desplegar el frontend apuntando a la API publicada (`VITE_API_URL`) | <asignar> |
 | Crear la colección Postman con login y las operaciones principales | <asignar> |
 | Verificar en Postman que códigos de estado y estructura coinciden con Swagger | <asignar> |
 | Terminar la generación de reportes PDF / Excel / CSV | <asignar> |
