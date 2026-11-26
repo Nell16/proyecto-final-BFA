@@ -301,7 +301,16 @@ Decisiones clave: las versiones de test son inmutables una vez publicadas (un ca
 - Repositorio: https://github.com/Nell16/proyecto-final-BFA
 - API publicada: https://bfa-api-m03x.onrender.com
 - Swagger UI: https://bfa-api-m03x.onrender.com/swagger-ui.html
-- Captura Postman: <adjuntar, probando la URL publicada>
+- Colección Postman (importable): `docs/postman/BFA-API.postman_collection.json`
+- Login en Swagger UI con la URL publicada (credenciales tapadas):
+
+![Swagger: solicitud](evidencias/swagger-1-login-request.png)
+![Swagger: respuesta 200](evidencias/swagger-2-login-respuesta.png)
+![Swagger: esquema documentado](evidencias/swagger-3-esquema-documentado.png)
+
+- Misma prueba en Postman con la URL publicada: 200 OK con la estructura documentada.
+
+![Postman: login 200](evidencias/postman-login-respuesta.png)
 
 ## 4. Tareas pendientes y responsables
 
