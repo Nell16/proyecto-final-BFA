@@ -1,1 +1,0 @@
--- Seed data is managed by versioned migrations in supabase/migrations.
