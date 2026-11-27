@@ -1,14 +1,11 @@
 -- Carga de los instrumentos reales BFA y Weill (material oficial del proyecto).
 -- Generado a partir de: Manual BFA, Plantillas de correccion, Normas Nacionales 1992 (Nicaragua),
 -- Test no verbal de Pierre Gilles Weill y su tabla de calificaciones.
-BEGIN;
 SET search_path = public, extensions;
 
-DO $g$ BEGIN
-  IF EXISTS (SELECT 1 FROM test WHERE test_id IN (101,102)) THEN
-    RAISE EXCEPTION 'Los instrumentos reales ya estan cargados (test 101/102).';
-  END IF;
-END $g$;
+-- Limpieza: el editor SQL confirma cada sentencia por separado, asi que el script
+-- debe poder repetirse. Se borra solo lo que este script crea (tests 101 y 102).
+DELETE FROM test WHERE test_id IN (101,102);
 
 
 -- 1. TESTS
@@ -1372,5 +1369,3 @@ DO $$ DECLARE v RECORD; BEGIN
   FOR v IN SELECT c.table_name, c.column_name, pg_get_serial_sequence(c.table_name, c.column_name) AS seq FROM information_schema.columns c WHERE c.table_schema='public' AND c.column_default LIKE 'nextval(%' LOOP
     EXECUTE format('SELECT setval(%L, COALESCE((SELECT max(%I) FROM %I),0)+1, false)', v.seq, v.column_name, v.table_name);
   END LOOP; END $$;
-SET CONSTRAINTS ALL IMMEDIATE;
-COMMIT;
