@@ -22,7 +22,7 @@ SELECT s.id, s.ver, s.cod, s.nom, s.des,
        (SELECT usuario_id FROM usuario WHERE nombre_usuario='aplicador'), (now() AT TIME ZONE 'UTC') - interval '1 hour'
 FROM (VALUES
  (101, 101, 'S-DEMO-BFA', 'BFA - Demostracion con aspirante', 'Sesion abierta para demostrar la aplicacion real del BFA.'),
- (102, 102, 'S-DEMO-WEILL', 'Weill - Demostracion con aspirante', 'Sesion abierta para demostrar la aplicacion del test no verbal de Weill.')
+ (102, 103, 'S-DEMO-WEILL', 'Weill - Demostracion con aspirante', 'Sesion abierta para demostrar la aplicacion del test no verbal de Weill.')
 ) AS s(id, ver, cod, nom, des);
 
 INSERT INTO sesion_subtest (sesion_subtest_id, sesion_aplicacion_id, version_test_id, subtest_id, numero_orden, tiempo_limite_segundos)

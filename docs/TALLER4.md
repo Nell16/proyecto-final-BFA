@@ -384,3 +384,12 @@ Decisiones clave: las versiones de test son inmutables una vez publicadas (un ca
 | Implementar la restauración real de respaldos | Nell16 |
 | Revisar pruebas automáticas y datos semilla para la demostración | Nell16 |
 | Evitar que la API gratuita se duerma antes de la revisión (el arranque en frío tarda de 2 a 3 minutos) | Nell16 |
+
+## Anexo: instrumentos reales y sesion de demostracion
+
+- `backend/supabase/seed_real/01_instrumentos_bfa_weill.sql`: BFA real (99 reactivos, claves y normas nacionales 1992).
+- `backend/supabase/seed_real/03_weill_v103_borrador.sql`: Weill (60 reactivos, clave y baremos UN) cargado como BORRADOR para poder adjuntar las laminas; la version 102 sin imagenes queda RETIRADA.
+- `backend/supabase/seed_real/04_publicar_weill.sql`: publica la version 103 una vez subidas las imagenes (`POST /items/{id}/images`).
+- `backend/supabase/seed_real/02_sesion_demostracion.sql`: aspirante de prueba y dos sesiones. Volver a ejecutarlo reinicia la demo.
+
+Accesos de aspirante: `/evaluacion/10001-ASPIRANTE2026` (BFA) y `/evaluacion/10002-WEILL2026` (Weill).
