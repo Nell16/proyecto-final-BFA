@@ -10,17 +10,11 @@ DO $g$ BEGIN
   END IF;
 END $g$;
 
-CREATE TEMP TABLE ref_real ON COMMIT DROP AS
-SELECT (now() AT TIME ZONE 'UTC') AS ahora,
-       date_trunc('day', now() AT TIME ZONE 'UTC') AS hoy,
-       (SELECT usuario_id FROM usuario WHERE nombre_usuario = 'psicologa') AS psico,
-       (SELECT usuario_id FROM usuario WHERE nombre_usuario = 'aplicador') AS aplic,
-       (SELECT estrategia_calificacion_id FROM estrategia_calificacion WHERE codigo = 'CLAVE_SIMPLE') AS est;
 
 -- 1. TESTS
 INSERT INTO test (test_id, codigo_test, nombre_test, descripcion, creado_por, estado, creado_en)
-SELECT t.id, t.cod, t.nom, t.des, r.psico, 'ACTIVO', r.hoy - interval '30 days'
-FROM ref_real r, (VALUES
+SELECT t.id, t.cod, t.nom, t.des, (SELECT usuario_id FROM usuario WHERE nombre_usuario='psicologa'), 'ACTIVO', date_trunc('day', now() AT TIME ZONE 'UTC') - interval '30 days'
+FROM (VALUES
   (101, 'BFA-NI', 'Bateria Factorial de Aptitudes (BFA)', 'Instrumento de J. Manzione digitalizado con los subtests verbales: Vocabulario Forma A, Vocabulario Forma B y Comprension Verbal. Claves y tiempos tomados del manual y de las plantillas oficiales de correccion.'),
   (102, 'WEILL', 'Test No Verbal de Inteligencia (Pierre Gilles Weill)', 'Prueba no verbal Forma A: 60 reactivos de completamiento de figuras, cada uno con ocho opciones graficas. Clave y baremos tomados de la Tabla de Calificaciones de Weill.')
 ) AS t(id, cod, nom, des);
@@ -28,8 +22,8 @@ FROM ref_real r, (VALUES
 -- 2. VERSIONES
 INSERT INTO version_test (version_test_id, test_id, estrategia_calificacion_id, numero_version, estado,
                           instrucciones_generales, tiempo_limite_segundos, aprobado_por, aprobado_en, creado_por, creado_en)
-SELECT v.id, v.test, r.est, v.num, 'APROBADO', v.instr, v.t, r.psico, r.hoy - interval '20 days', r.psico, r.hoy - interval '30 days'
-FROM ref_real r, (VALUES
+SELECT v.id, v.test, (SELECT estrategia_calificacion_id FROM estrategia_calificacion WHERE codigo='CLAVE_SIMPLE'), v.num, 'APROBADO', v.instr, v.t, (SELECT usuario_id FROM usuario WHERE nombre_usuario='psicologa'), date_trunc('day', now() AT TIME ZONE 'UTC') - interval '20 days', (SELECT usuario_id FROM usuario WHERE nombre_usuario='psicologa'), date_trunc('day', now() AT TIME ZONE 'UTC') - interval '30 days'
+FROM (VALUES
   (101, 101, '1992-NI', 'Lea con atencion las instrucciones de cada subtest. Cada subtest tiene su propio tiempo limite. Marque una sola respuesta por ejercicio.', 1560),
   (102, 102, 'Forma A', 'Observe la figura incompleta de cada recuadro y elija, entre las ocho opciones numeradas, la que completa correctamente el dibujo. Marque una sola respuesta por ejercicio.', 1800)
 ) AS v(id, test, num, instr, t);
@@ -37,7 +31,7 @@ FROM ref_real r, (VALUES
 -- 3. SUBTESTS  (tiempos del Manual BFA: VOC1 5 min, VOC2 6 min, CV 15 min)
 INSERT INTO subtest (subtest_id, version_test_id, estrategia_calificacion_id, codigo_subtest, nombre_subtest,
                      descripcion, instrucciones, numero_orden, tiempo_limite_segundos)
-SELECT s.id, s.ver, r.est, s.cod, s.nom, s.des, s.ins, s.ord, s.t FROM ref_real r, (VALUES
+SELECT s.id, s.ver, (SELECT estrategia_calificacion_id FROM estrategia_calificacion WHERE codigo='CLAVE_SIMPLE'), s.cod, s.nom, s.des, s.ins, s.ord, s.t FROM (VALUES
   (1011, 101, 'VOC1', 'Vocabulario, Forma A', 'Sinonimia: elegir la palabra de significado mas proximo.', 'Cada ejercicio presenta una palabra en mayusculas y cinco opciones. Marque la que tiene el mismo significado.', 1, 300),
   (1012, 101, 'VOC2', 'Vocabulario, Forma B', 'Discriminacion semantica: detectar la palabra distinta del conjunto.', 'Cuatro de las cinco palabras tienen un significado proximo. Marque la que NO pertenece al conjunto.', 2, 360),
   (1013, 101, 'CV', 'Comprension Verbal', 'Interpretacion de pensamientos y proverbios.', 'Cada pensamiento va acompanado de tres opciones. Marque la que mas se aproxima a su significado.', 3, 900),
@@ -1125,17 +1119,17 @@ INSERT INTO opcion_item (opcion_id, item_id, codigo_opcion, texto_opcion, numero
 
 -- 5. DIMENSIONES, REGLAS Y CLAVES
 INSERT INTO dimension_resultado (dimension_resultado_id, version_test_id, subtest_id, codigo_dimension, nombre_dimension, descripcion, orden_presentacion, puntaje_minimo, puntaje_maximo, creado_en)
-SELECT s.subtest_id, s.version_test_id, s.subtest_id, s.codigo_subtest, s.nombre_subtest, 'Puntaje directo de ' || s.nombre_subtest, s.numero_orden, 0, (SELECT count(*) FROM item i WHERE i.subtest_id = s.subtest_id), r.hoy - interval '25 days'
-FROM subtest s, ref_real r WHERE s.version_test_id IN (101,102);
+SELECT s.subtest_id, s.version_test_id, s.subtest_id, s.codigo_subtest, s.nombre_subtest, 'Puntaje directo de ' || s.nombre_subtest, s.numero_orden, 0, (SELECT count(*) FROM item i WHERE i.subtest_id = s.subtest_id), date_trunc('day', now() AT TIME ZONE 'UTC') - interval '25 days'
+FROM subtest s  WHERE s.version_test_id IN (101,102);
 
 INSERT INTO regla_calificacion (regla_calificacion_id, version_test_id, subtest_id, estrategia_calificacion_id, tipo_regla, prioridad, activa, estado, parametros, observacion, creado_por, creado_en, aprobado_por, aprobado_en)
-SELECT s.subtest_id, s.version_test_id, s.subtest_id, r.est, 'CLAVE_ITEM', 1, TRUE, 'PUBLICADO',
+SELECT s.subtest_id, s.version_test_id, s.subtest_id, (SELECT estrategia_calificacion_id FROM estrategia_calificacion WHERE codigo='CLAVE_SIMPLE'), 'CLAVE_ITEM', 1, TRUE, 'PUBLICADO',
        jsonb_build_object('puntaje_por_acierto', 1, 'omitida_cuenta_como', 'INCORRECTA'),
-       'Un punto por acierto en ' || s.nombre_subtest, r.psico, r.hoy - interval '25 days', r.psico, r.hoy - interval '20 days'
-FROM subtest s, ref_real r WHERE s.version_test_id IN (101,102);
+       'Un punto por acierto en ' || s.nombre_subtest, (SELECT usuario_id FROM usuario WHERE nombre_usuario='psicologa'), date_trunc('day', now() AT TIME ZONE 'UTC') - interval '25 days', (SELECT usuario_id FROM usuario WHERE nombre_usuario='psicologa'), date_trunc('day', now() AT TIME ZONE 'UTC') - interval '20 days'
+FROM subtest s  WHERE s.version_test_id IN (101,102);
 
 INSERT INTO clave_respuesta (clave_respuesta_id, regla_calificacion_id, item_id, opcion_correcta_id, puntaje, creado_por, creado_en)
-SELECT k.iid, k.sid, k.iid, k.oid, 1.00, r.psico, r.hoy - interval '25 days' FROM ref_real r, (VALUES
+SELECT k.iid, k.sid, k.iid, k.oid, 1.00, (SELECT usuario_id FROM usuario WHERE nombre_usuario='psicologa'), date_trunc('day', now() AT TIME ZONE 'UTC') - interval '25 days' FROM (VALUES
 (1011001, 1011, 10110014),
 (1011002, 1011, 10110024),
 (1011003, 1011, 10110034),
@@ -1297,13 +1291,13 @@ SELECT k.iid, k.sid, k.iid, k.oid, 1.00, r.psico, r.hoy - interval '25 days' FRO
 (1021060, 1021, 10210602)) AS k(iid, sid, oid);
 
 INSERT INTO opcion_puntaje_dimension (opcion_puntaje_dimension_id, regla_calificacion_id, opcion_id, dimension_resultado_id, puntaje, peso, activa, creado_en)
-SELECT c.clave_respuesta_id, c.regla_calificacion_id, c.opcion_correcta_id, i.subtest_id, 1.00, 1.0000, TRUE, r.hoy - interval '25 days'
-FROM clave_respuesta c JOIN item i ON i.item_id = c.item_id, ref_real r WHERE i.subtest_id IN (1011,1012,1013,1021);
+SELECT c.clave_respuesta_id, c.regla_calificacion_id, c.opcion_correcta_id, i.subtest_id, 1.00, 1.0000, TRUE, date_trunc('day', now() AT TIME ZONE 'UTC') - interval '25 days'
+FROM clave_respuesta c JOIN item i ON i.item_id = c.item_id  WHERE i.subtest_id IN (1011,1012,1013,1021);
 
 -- 6. BAREMOS
 INSERT INTO baremo (baremo_id, version_test_id, dimension_resultado_id, codigo_baremo, nombre, descripcion, grupo_normativo, criterio_edad_minima, criterio_edad_maxima, vigente_desde, estado, creado_por, creado_en, aprobado_por, aprobado_en)
-SELECT b.id, b.ver, b.dim, b.cod, b.nom, b.des, b.grp, b.emin, b.emax, (r.hoy - interval '1 year')::date, 'PUBLICADO', r.psico, r.hoy - interval '25 days', r.psico, r.hoy - interval '20 days'
-FROM ref_real r, (VALUES
+SELECT b.id, b.ver, b.dim, b.cod, b.nom, b.des, b.grp, b.emin, b.emax, (date_trunc('day', now() AT TIME ZONE 'UTC') - interval '1 year')::date, 'PUBLICADO', (SELECT usuario_id FROM usuario WHERE nombre_usuario='psicologa'), date_trunc('day', now() AT TIME ZONE 'UTC') - interval '25 days', (SELECT usuario_id FROM usuario WHERE nombre_usuario='psicologa'), date_trunc('day', now() AT TIME ZONE 'UTC') - interval '20 days'
+FROM (VALUES
 (1011,101,1011,'BAR-VOC1','Baremo Vocabulario Forma A','Normas Nacionales del BFA 1992 (Nicaragua), columna Voc. 1. El rango superior se extiende al maximo de items digitalizados.','Normas Nacionales BFA 1992 (Nicaragua)',14,60),
 (1012,101,1012,'BAR-VOC2','Baremo Vocabulario Forma B','Normas Nacionales del BFA 1992 (Nicaragua), columna Voc. 2. El rango superior se extiende al maximo de items digitalizados.','Normas Nacionales BFA 1992 (Nicaragua)',14,60),
 (1013,101,1013,'BAR-CV','Baremo Comprension Verbal','Normas Nacionales del BFA 1992 (Nicaragua), columna C. V. El rango superior se extiende al maximo de items digitalizados.','Normas Nacionales BFA 1992 (Nicaragua)',14,60),
