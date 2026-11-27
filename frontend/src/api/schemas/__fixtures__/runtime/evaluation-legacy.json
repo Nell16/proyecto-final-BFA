@@ -1,0 +1,144 @@
+{
+  "success": true,
+  "data": {
+    "id": null,
+    "assignmentId": 42,
+    "sessionId": 7,
+    "participantDisplayName": "Ana Pérez Gómez",
+    "sessionName": "Evaluación Cohorte 2026-1",
+    "sessionStatus": "ABIERTA",
+    "attemptStatus": "NO_INICIADO",
+    "subtests": [
+      {
+        "subtestId": 20,
+        "code": "MAT-NUM",
+        "name": "Razonamiento Numérico",
+        "instructions": null,
+        "order": 2,
+        "timeLimitSeconds": null,
+        "randomizeItems": false,
+        "randomizeOptions": false,
+        "status": "NO_INICIADO",
+        "items": [
+          {
+            "itemId": 201,
+            "code": "NUM-01",
+            "itemType": "SOLO_TEXTO",
+            "responseType": "NUMERICA",
+            "prompt": "Calcula el valor de x en 2x + 4 = 12.",
+            "instruction": "Ingresa solo el número entero.",
+            "order": 1,
+            "timeLimitSeconds": null,
+            "required": true,
+            "images": [],
+            "options": []
+          }
+        ]
+      },
+      {
+        "subtestId": 10,
+        "code": "RAZ-VERB",
+        "name": "Razonamiento Verbal",
+        "instructions": "Lee cuidadosamente cada enunciado antes de responder.",
+        "order": 1,
+        "timeLimitSeconds": 600,
+        "randomizeItems": false,
+        "randomizeOptions": true,
+        "status": "NO_INICIADO",
+        "items": [
+          {
+            "itemId": 102,
+            "code": "RV-02",
+            "itemType": "TEXTO_E_IMAGEN",
+            "responseType": "OPCION_MULTIPLE",
+            "prompt": "Selecciona las figuras equivalentes.",
+            "instruction": null,
+            "order": 2,
+            "timeLimitSeconds": 90,
+            "required": true,
+            "images": [
+              {
+                "imageId": 502,
+                "url": "/items/images/resources/902",
+                "role": "ESTIMULO",
+                "order": 2,
+                "altText": "Figura B"
+              },
+              {
+                "imageId": 501,
+                "url": "/items/images/resources/901",
+                "role": "ESTIMULO",
+                "order": 1,
+                "altText": "Figura A"
+              }
+            ],
+            "options": [
+              {
+                "optionId": 1002,
+                "code": "OPT-2",
+                "text": "Segunda figura",
+                "order": 2,
+                "ordinalValue": 2.0,
+                "images": [
+                  {
+                    "imageId": 601,
+                    "url": "/items/images/resources/951",
+                    "order": 1,
+                    "altText": "Miniatura B"
+                  }
+                ]
+              },
+              {
+                "optionId": 1001,
+                "code": "OPT-1",
+                "text": "Primera figura",
+                "order": 1,
+                "ordinalValue": 1.0,
+                "images": []
+              }
+            ]
+          },
+          {
+            "itemId": 101,
+            "code": "RV-01",
+            "itemType": "RAZONAMIENTO_VERBAL",
+            "responseType": "OPCION_UNICA",
+            "prompt": "Libro es a lectura como tenedor es a:",
+            "instruction": "Elige una opción.",
+            "order": 1,
+            "timeLimitSeconds": null,
+            "required": true,
+            "images": [],
+            "options": [
+              {
+                "optionId": 901,
+                "code": "OP-A",
+                "text": "Alimentación",
+                "order": 1,
+                "ordinalValue": null,
+                "images": []
+              },
+              {
+                "optionId": 902,
+                "code": "OP-B",
+                "text": "Pintura",
+                "order": 2,
+                "ordinalValue": null,
+                "images": []
+              },
+              {
+                "optionId": 903,
+                "code": "OP-C",
+                "text": "Música",
+                "order": 3,
+                "ordinalValue": null,
+                "images": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "correlationId": "req-yo-legacy"
+}

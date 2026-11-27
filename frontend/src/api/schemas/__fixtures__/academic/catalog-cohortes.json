@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "codigoCohorte": "2026-1",
+    "nombreCohorte": "Cohorte 2026-I",
+    "anio": 2026,
+    "periodo": "I",
+    "estado": "ACTIVO"
+  },
+  {
+    "id": 2,
+    "codigoCohorte": "2026-2",
+    "nombreCohorte": "Cohorte 2026-II",
+    "anio": 2026,
+    "periodo": null,
+    "estado": "ACTIVO"
+  }
+]

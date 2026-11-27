@@ -1,0 +1,26 @@
+[
+  {
+    "id": 30,
+    "codigoItem": "IT-1",
+    "tipoItem": "TEXTO_E_IMAGEN",
+    "tipoRespuesta": "OPCION_UNICA",
+    "enunciado": "¿Qué figura completa la serie?",
+    "instruccion": "Seleccione una opción.",
+    "numeroOrden": 1,
+    "puntajeBase": 1,
+    "tiempoLimiteSegundos": null,
+    "esObligatorio": true,
+    "esConfidencial": true,
+    "estado": "ACTIVO",
+    "imagenes": [
+      {
+        "id": 55,
+        "numeroOrden": 1,
+        "textoAlternativo": "Figura",
+        "rutaAlmacenamiento": "test-config/items/30/file.png",
+        "url": null,
+        "rol": "ENUNCIADO"
+      }
+    ]
+  }
+]

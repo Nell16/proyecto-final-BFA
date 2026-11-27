@@ -55,4 +55,10 @@ public class SesionAplicacion {
     @NotNull
     @Column(name = "creado_en", nullable = false)
     private LocalDateTime creadoEn;
+    /**
+     * Inicio de la pausa abierta (o null). Solo lectura: lo calcula la BD al cargar; el servicio de ciclo de vida
+     * lo ajusta en memoria tras pausar/reanudar/cerrar/cancelar para que la respuesta sea coherente.
+     */
+    @Formula("(select p.pausado_en from pausa_sesion p where p.sesion_aplicacion_id = sesion_aplicacion_id and p.reanudado_en is null)")
+    private LocalDateTime pausadoEn;
 }

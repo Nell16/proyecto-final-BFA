@@ -1,0 +1,42 @@
+{
+  "id": "c3d4e5f6-a7b8-4901-adef-333333333333",
+  "codigoParticipante": "PART-2026-003",
+  "nombres": "Lucía Fernanda",
+  "apellidos": "Torres Vega",
+  "fechaNacimiento": "2005-09-20",
+  "sexo": {
+    "id": 1,
+    "codigo": "F",
+    "nombre": "Femenino",
+    "estado": "ACTIVO"
+  },
+  "carrera": {
+    "id": 1,
+    "codigoCarrera": "PSI",
+    "nombreCarrera": "Psicología",
+    "estado": "ACTIVO"
+  },
+  "cohorte": {
+    "id": 1,
+    "codigoCohorte": "2026-1",
+    "nombreCohorte": "Cohorte 2026-I",
+    "anio": 2026,
+    "periodo": "I",
+    "estado": "ACTIVO"
+  },
+  "grupoAcademico": {
+    "id": 1,
+    "carrera": {
+      "id": 1,
+      "codigoCarrera": "PSI",
+      "nombreCarrera": "Psicología",
+      "estado": "ACTIVO"
+    },
+    "codigoGrupo": "PSI-A",
+    "nombreGrupo": "Grupo A",
+    "estado": "ACTIVO"
+  },
+  "estado": "ACTIVO",
+  "creadoEn": "2026-03-01T10:00:00",
+  "actualizadoEn": "2026-03-01T10:00:00"
+}

@@ -16,6 +16,7 @@ public final class SecurityPermissions {
 
     public static final String PARTICIPANTE_LEER = "hasAuthority('PERM_PARTICIPANTE_LEER')";
     public static final String PARTICIPANTE_CREAR = "hasAuthority('PERM_PARTICIPANTE_CREAR')";
+    public static final String PARTICIPANTE_MODIFICAR = "hasAuthority('PERM_PARTICIPANTE_MODIFICAR')";
     public static final String PARTICIPANTE_ELIMINAR = "hasAuthority('PERM_PARTICIPANTE_ELIMINAR')";
     public static final String PARTICIPANTE_ACCESO_GESTIONAR = "hasAuthority('PERM_PARTICIPANTE_ACCESO_GESTIONAR')";
 
@@ -26,14 +27,24 @@ public final class SecurityPermissions {
     public static final String ROL_LEER = "hasAuthority('PERM_ROL_LEER')";
     public static final String ROL_MODIFICAR = "hasAuthority('PERM_ROL_MODIFICAR')";
 
-    public static final String TEST_LEER = "hasAuthority('PERM_TEST_CREAR') or hasAuthority('PERM_TEST_PUBLICAR')";
+    private static final String AUTH_TEST_LEER = "PERM_TEST_LEER";
+    private static final String AUTH_TEST_CREAR = "PERM_TEST_CREAR";
+    private static final String AUTH_TEST_PUBLICAR = "PERM_TEST_PUBLICAR";
+    /** Authorities que dan lectura completa de instrumentos (TEST_LEER); fuente unica para SpEL y para CurrentActor. */
+    public static final java.util.List<String> TEST_LEER_AUTHORITIES =
+            java.util.List.of(AUTH_TEST_LEER, AUTH_TEST_CREAR, AUTH_TEST_PUBLICAR);
+    public static final String TEST_LEER = "hasAuthority('" + AUTH_TEST_LEER + "') or hasAuthority('" + AUTH_TEST_CREAR
+            + "') or hasAuthority('" + AUTH_TEST_PUBLICAR + "')";
+    /** Solo catalogo: listar tests, versiones publicadas y subtests para programar sesiones. */
+    public static final String INSTRUMENTO_CATALOGO_LEER =
+            "hasAuthority('PERM_INSTRUMENTO_CATALOGO_LEER') or " + TEST_LEER;
     public static final String TEST_CREAR = "hasAuthority('PERM_TEST_CREAR')";
     public static final String TEST_PUBLICAR = "hasAuthority('PERM_TEST_PUBLICAR')";
 
     public static final String CALIFICACION_CONFIGURAR = "hasAuthority('PERM_CALIFICACION_CONFIGURAR')";
     public static final String CALIFICACION_EJECUTAR = "hasAuthority('PERM_CALIFICACION_EJECUTAR')";
     public static final String BAREMO_CONFIGURAR = "hasAuthority('PERM_BAREMO_CONFIGURAR')";
-    public static final String SESION_LEER = "hasAuthority('PERM_SESION_APLICAR') or hasAuthority('PERM_SESION_CREAR')";
+    public static final String SESION_LEER = "hasAuthority('PERM_SESION_LEER') or hasAuthority('PERM_SESION_APLICAR') or hasAuthority('PERM_SESION_CREAR')";
     public static final String SESION_CREAR = "hasAuthority('PERM_SESION_CREAR')";
     public static final String SESION_APLICAR = "hasAuthority('PERM_SESION_APLICAR')";
     public static final String RESULTADO_VER = "hasAuthority('PERM_RESULTADO_VER')";

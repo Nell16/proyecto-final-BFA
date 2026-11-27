@@ -1,0 +1,19 @@
+{
+  "permissionColumns": ["USUARIO_LEER", "USUARIO_CREAR", "REPORTE_EXPORTAR"],
+  "users": [
+    {
+      "userId": "11111111-1111-1111-1111-111111111111",
+      "username": "admin",
+      "email": "admin@uam.edu.ni",
+      "fullName": "Administrador Principal",
+      "status": "ACTIVO",
+      "roles": ["ADMIN"],
+      "permissions": ["USUARIO_LEER", "USUARIO_CREAR", "REPORTE_EXPORTAR"],
+      "matrix": {
+        "USUARIO_LEER": true,
+        "USUARIO_CREAR": true,
+        "REPORTE_EXPORTAR": true
+      }
+    }
+  ]
+}

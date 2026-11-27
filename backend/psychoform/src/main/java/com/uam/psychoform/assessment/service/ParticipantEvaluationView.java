@@ -2,6 +2,9 @@ package com.uam.psychoform.assessment.service;
 
 import com.uam.psychoform.assessment.model.AsignacionTest;
 import com.uam.psychoform.assessment.model.IntentoSubtest;
+import com.uam.psychoform.assessment.model.EstadoAsignacion;
+import com.uam.psychoform.assessment.model.EstadoSesionAplicacion;
+import com.uam.psychoform.assessment.model.PausaSesion;
 import com.uam.psychoform.assessment.model.IntentoTest;
 import com.uam.psychoform.assessment.model.SesionSubtest;
 import com.uam.psychoform.assessment.repository.AsignacionTestRepository;
@@ -38,11 +41,13 @@ public class ParticipantEvaluationView {
     private final OpcionItemLookupRepository opciones;
     private final ImagenItemRepository imagenesItem;
     private final ImagenOpcionRepository imagenesOpcion;
+    private final SubtestTimingService timing;
 
     public ParticipantEvaluationView(AsignacionTestRepository asignaciones, IntentoTestRepository intentos,
             IntentoSubtestRepository intentoSubtests, SesionSubtestRepository sesionSubtests,
             ItemLookupRepository items, OpcionItemLookupRepository opciones,
-            ImagenItemRepository imagenesItem, ImagenOpcionRepository imagenesOpcion) {
+            ImagenItemRepository imagenesItem, ImagenOpcionRepository imagenesOpcion,
+            SubtestTimingService timing) {
         this.asignaciones = asignaciones;
         this.intentos = intentos;
         this.intentoSubtests = intentoSubtests;
@@ -51,21 +56,28 @@ public class ParticipantEvaluationView {
         this.opciones = opciones;
         this.imagenesItem = imagenesItem;
         this.imagenesOpcion = imagenesOpcion;
+        this.timing = timing;
     }
 
     public EvaluationPayload getEvaluationPayload(long asignacionId) {
         AsignacionTest asignacion = asignaciones.findByIdWithSessionAndParticipant(asignacionId)
                 .orElseThrow(() -> new EntityNotFoundException("Asignacion no encontrada: " + asignacionId));
         Optional<IntentoTest> intento = intentos.findByAsignacionId(asignacionId);
-        Map<Long, String> subtestStatuses = intento
+        Map<Long, IntentoSubtest> attemptSubtests = intento
                 .map(existing -> intentoSubtests.findByIntentoIdWithSubtest(existing.getId()).stream()
                         .collect(Collectors.toMap(status -> status.getSubtest().getId(),
-                                status -> status.getEstado().name(), (first, second) -> first)))
+                                status -> status, (first, second) -> first)))
                 .orElseGet(Map::of);
+        Long sesionId = asignacion.getSesionAplicacion().getId();
+        EstadoSesionAplicacion sessionState = asignacion.getSesionAplicacion().getEstado();
+        List<PausaSesion> pausas = timing.loadPausas(sesionId);
         List<SesionSubtest> sessionSubtests = sesionSubtests
                 .findBySesionAplicacionIdWithSubtestOrderByNumeroOrdenAsc(asignacion.getSesionAplicacion().getId());
-        List<Long> subtestIds = sessionSubtests.stream().map(sesionSubtest -> sesionSubtest.getSubtest().getId())
-                .toList();
+        // Una asignacion COMPLETADO es de solo lectura: se devuelve el estado final sin items ni opciones.
+        boolean completed = asignacion.getEstado() == EstadoAsignacion.COMPLETADO;
+        List<Long> subtestIds = completed
+                ? List.of()
+                : sessionSubtests.stream().map(sesionSubtest -> sesionSubtest.getSubtest().getId()).toList();
         Map<Long, List<Item>> itemsBySubtest = subtestIds.isEmpty()
                 ? Map.of()
                 : items.findBySubtestIdInAndEstadoOrderBySubtestAndItemOrder(subtestIds, EstadoGeneral.ACTIVO)
@@ -86,14 +98,17 @@ public class ParticipantEvaluationView {
                 : imagenesOpcion.findByOpcionIdInOrderByOptionAndImageOrder(optionIds).stream()
                         .collect(Collectors.groupingBy(image -> image.getOpcion().getId()));
         List<SubtestPayload> subtests = sessionSubtests.stream()
-                .map(sesionSubtest -> toSubtestPayload(sesionSubtest, subtestStatuses, itemsBySubtest,
-                        optionsByItem, imagesByItem, imagesByOption))
+                .map(sesionSubtest -> toSubtestPayload(sesionSubtest, attemptSubtests, sessionState, pausas,
+                        itemsBySubtest, optionsByItem, imagesByItem, imagesByOption))
                 .toList();
         Long attemptId = intento.map(IntentoTest::getId).orElse(null);
         String attemptStatus = intento.map(existing -> existing.getEstado().name()).orElse("NO_INICIADO");
         return new EvaluationPayload(attemptId, asignacion.getId(), asignacion.getSesionAplicacion().getId(),
                 participantDisplayName(asignacion), asignacion.getSesionAplicacion().getNombreSesion(),
-                asignacion.getSesionAplicacion().getEstado().name(), attemptStatus, subtests);
+                sessionState.name(), timing.toOffsetDateTime(asignacion.getSesionAplicacion().getPausadoEn()),
+                attemptStatus, subtests,
+                completed ? intento.map(existing -> timing.toOffsetDateTime(existing.getFinalizadoEn())).orElse(null)
+                        : null);
     }
 
     public SubtestPayload getScopedSubtestPayload(ParticipantAccessService.ParticipantAccess access, long attemptId,
@@ -109,18 +124,24 @@ public class ParticipantEvaluationView {
                 .orElseThrow(() -> new EntityNotFoundException("Subtest no encontrado en intento"));
     }
 
-    private SubtestPayload toSubtestPayload(SesionSubtest sesionSubtest, Map<Long, String> subtestStatuses,
-            Map<Long, List<Item>> itemsBySubtest, Map<Long, List<OpcionItem>> optionsByItem,
+    private SubtestPayload toSubtestPayload(SesionSubtest sesionSubtest, Map<Long, IntentoSubtest> attemptSubtests,
+            EstadoSesionAplicacion sessionState, List<PausaSesion> pausas, Map<Long, List<Item>> itemsBySubtest, Map<Long, List<OpcionItem>> optionsByItem,
             Map<Long, List<ImagenItem>> imagesByItem, Map<Long, List<ImagenOpcion>> imagesByOption) {
         List<ItemPayload> itemPayloads = itemsBySubtest.getOrDefault(sesionSubtest.getSubtest().getId(), List.of())
                 .stream()
                 .map(item -> toItemPayload(item, optionsByItem, imagesByItem, imagesByOption))
                 .toList();
+        IntentoSubtest attemptSubtest = attemptSubtests.get(sesionSubtest.getSubtest().getId());
+        SubtestTimingService.SubtestTiming subtestTiming = attemptSubtest == null
+                ? timing.notStarted(sesionSubtest.getTiempoLimiteSegundos())
+                : timing.forAttemptSubtest(attemptSubtest, sessionState, pausas);
+        String status = attemptSubtest == null ? "NO_INICIADO" : attemptSubtest.getEstado().name();
         return new SubtestPayload(sesionSubtest.getSubtest().getId(), sesionSubtest.getSubtest().getCodigoSubtest(),
                 sesionSubtest.getSubtest().getNombreSubtest(), sesionSubtest.getSubtest().getInstrucciones(),
                 sesionSubtest.getNumeroOrden(), sesionSubtest.getTiempoLimiteSegundos(),
                 sesionSubtest.getPermiteAleatorizarItems(), sesionSubtest.getPermiteAleatorizarOpciones(),
-                subtestStatuses.getOrDefault(sesionSubtest.getSubtest().getId(), "NO_INICIADO"), itemPayloads);
+                status, subtestTiming.startedAt(), subtestTiming.remainingSeconds(), subtestTiming.paused(),
+                subtestTiming.serverNow(), itemPayloads);
     }
 
     private ItemPayload toItemPayload(Item item, Map<Long, List<OpcionItem>> optionsByItem,
@@ -167,13 +188,22 @@ public class ParticipantEvaluationView {
         return (asignacion.getParticipante().getNombres() + " " + asignacion.getParticipante().getApellidos()).trim();
     }
 
+    /** {@code finishedAt}: fin del intento; solo se informa cuando la asignacion esta COMPLETADO (B21). */
     public record EvaluationPayload(Long id, long assignmentId, long sessionId, String participantDisplayName,
-            String sessionName, String sessionStatus, String attemptStatus, List<SubtestPayload> subtests) {
+            String sessionName, String sessionStatus, java.time.OffsetDateTime pausedAt, String attemptStatus, List<SubtestPayload> subtests,
+            java.time.OffsetDateTime finishedAt) {
+        public EvaluationPayload(Long id, long assignmentId, long sessionId, String participantDisplayName,
+                String sessionName, String sessionStatus, java.time.OffsetDateTime pausedAt, String attemptStatus,
+                List<SubtestPayload> subtests) {
+            this(id, assignmentId, sessionId, participantDisplayName, sessionName, sessionStatus, pausedAt,
+                    attemptStatus, subtests, null);
+        }
     }
 
     public record SubtestPayload(long subtestId, String code, String name, String instructions, int order,
             Integer timeLimitSeconds, boolean randomizeItems, boolean randomizeOptions, String status,
-            List<ItemPayload> items) {
+            java.time.OffsetDateTime startedAt, Integer remainingSeconds, boolean paused,
+            java.time.OffsetDateTime serverNow, List<ItemPayload> items) {
     }
 
     public record ItemPayload(long itemId, String code, String itemType, String responseType, String prompt,

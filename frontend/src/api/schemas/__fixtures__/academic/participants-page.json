@@ -1,0 +1,39 @@
+{
+  "content": [
+    {
+      "id": "a1b2c3d4-e5f6-4789-abcd-111111111111",
+      "codigoParticipante": "PART-2026-001",
+      "nombres": "Ana Sofía",
+      "apellidos": "Martínez López",
+      "fechaNacimiento": "2004-05-12",
+      "sexoId": 1,
+      "carreraId": 1,
+      "cohorteId": 1,
+      "grupoAcademicoId": 1,
+      "estado": "ACTIVO",
+      "creadoEn": "2026-02-10T09:15:00",
+      "actualizadoEn": "2026-02-10T09:15:00"
+    },
+    {
+      "id": "b2c3d4e5-f6a7-4890-bcde-222222222222",
+      "codigoParticipante": "PART-2026-002",
+      "nombres": "Carlos Eduardo",
+      "apellidos": "Gómez Ruiz",
+      "fechaNacimiento": null,
+      "sexo": null,
+      "carrera": null,
+      "cohorte": null,
+      "grupoAcademico": null,
+      "estado": "INACTIVO",
+      "creadoEn": "2026-02-11T14:30:00",
+      "actualizadoEn": "2026-02-12T08:00:00"
+    }
+  ],
+  "number": 0,
+  "size": 20,
+  "numberOfElements": 2,
+  "totalElements": 2,
+  "totalPages": 1,
+  "first": true,
+  "last": true
+}

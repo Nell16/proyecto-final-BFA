@@ -1,0 +1,14 @@
+{
+  "id": "a1b2c3d4-e5f6-4789-abcd-111111111111",
+  "codigoParticipante": "PART-2026-001",
+  "nombres": "Ana Sofía",
+  "apellidos": "Martínez López",
+  "fechaNacimiento": "2004-05-12",
+  "sexoId": 1,
+  "carreraId": 1,
+  "cohorteId": 1,
+  "grupoAcademicoId": 1,
+  "estado": "ACTIVO",
+  "creadoEn": "2026-02-10T09:15:00",
+  "actualizadoEn": "2026-02-10T09:15:00"
+}

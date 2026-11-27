@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
-import { apiClient } from "../../../api/axios";
+import { staffClient } from "../../../api/client";
+import { safeErrorLog } from "../../../api/errors";
 
 interface AuthenticatedImageProps {
   src: string;
@@ -48,14 +49,15 @@ export function AuthenticatedImage({ src, alt = "", className = "", draggable = 
         setLoading(true);
         setError(false);
         const relativePath = getRelativeApiPath(src);
-        const response = await apiClient.get(relativePath, { responseType: "blob" });
+        const response = await staffClient.get(relativePath, { responseType: "blob" });
         
         if (isMounted) {
           localUrl = URL.createObjectURL(response.data);
           setObjectUrl(localUrl);
         }
       } catch (err) {
-        console.error("Error loading authenticated image:", err);
+        // Solo campos seguros: el error crudo de axios lleva el JWT (config.headers.Authorization).
+        console.error("Error loading authenticated image:", safeErrorLog(err));
         if (isMounted) {
           setError(true);
         }

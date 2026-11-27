@@ -1,0 +1,17 @@
+[
+  {
+    "id": 20,
+    "versionTestId": 10,
+    "estrategiaCalificacionId": 1,
+    "codigoSubtest": "MEM",
+    "nombreSubtest": "Memoria Visual",
+    "descripcion": "Evaluación de memoria visual inmediata",
+    "instrucciones": "Observe las figuras y seleccione la coincidencia.",
+    "numeroOrden": 1,
+    "tiempoLimiteSegundos": 600,
+    "permiteAleatorizarItems": true,
+    "permiteAleatorizarOpciones": false,
+    "esObligatorio": true,
+    "estado": "ACTIVO"
+  }
+]

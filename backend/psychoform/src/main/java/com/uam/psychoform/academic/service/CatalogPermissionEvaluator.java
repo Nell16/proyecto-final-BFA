@@ -3,6 +3,7 @@ package com.uam.psychoform.academic.service;
 import java.util.Map;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ClassUtils;
 
 @Component("catalogPermissionEvaluator")
 public class CatalogPermissionEvaluator {
@@ -49,7 +50,7 @@ public class CatalogPermissionEvaluator {
     }
 
     private static String resourceForService(Object service) {
-        return switch (service.getClass().getSimpleName()) {
+        return switch (ClassUtils.getUserClass(service).getSimpleName()) {
             case "CatalogoSexoService" -> "CATALOGO_SEXO";
             case "CarreraService" -> "CARRERA";
             case "CohorteService" -> "COHORTE";

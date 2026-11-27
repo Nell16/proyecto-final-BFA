@@ -1,0 +1,99 @@
+{
+  "attemptId": 42,
+  "resultId": 15,
+  "testName": "Inventario de Ansiedad",
+  "testVersion": "1.0",
+  "participantName": "María López",
+  "participantCode": "PART-0042",
+  "academicGroup": "Grupo A",
+  "carrera": "Psicología",
+  "cohorte": "2026-I",
+  "attemptStatus": "COMPLETADO",
+  "startedAt": "2026-10-01T09:00:00",
+  "finishedAt": "2026-10-01T09:18:30",
+  "totalTimeSeconds": 1110,
+  "deviceInfo": "Mozilla/5.0",
+  "ipAddress": "127.0.0.1",
+  "totalScore": 18.0,
+  "scoredAt": "2026-10-01T09:19:00",
+  "correctCount": 9,
+  "incorrectCount": 1,
+  "pendingReviewCount": 0,
+  "requiresManualReview": false,
+  "totalInterpretation": {
+    "baremoId": 3,
+    "baremoCode": "BAR-TOT-01",
+    "rangeId": 12,
+    "category": "Moderado",
+    "percentile": 65.0,
+    "interpretation": "Nivel moderado dentro del rango esperado.",
+    "recommendation": "Seguimiento preventivo."
+  },
+  "dimensions": [
+    {
+      "dimensionId": 5,
+      "name": "Somática",
+      "directScore": 10.0,
+      "category": "Medio",
+      "percentile": 60.0,
+      "interpretation": "Indicadores somáticos moderados."
+    }
+  ],
+  "subtests": [
+    {
+      "subtestId": 2,
+      "name": "Subtest A",
+      "code": "SUB-A",
+      "order": 1,
+      "items": [
+        {
+          "itemId": 101,
+          "code": "IT-01",
+          "order": 1,
+          "prompt": "¿Con qué frecuencia siente tensión muscular?",
+          "itemType": "SELECCION_UNICA",
+          "responseType": "OPCION_UNICA",
+          "baseScore": 2.0,
+          "timeLimitSeconds": 60,
+          "required": true,
+          "images": [],
+          "options": [
+            {
+              "optionId": 501,
+              "code": "A",
+              "text": "Nunca",
+              "order": 1,
+              "ordinalValue": 0,
+              "images": [],
+              "isCorrect": false,
+              "selected": false
+            },
+            {
+              "optionId": 502,
+              "code": "B",
+              "text": "Frecuentemente",
+              "order": 2,
+              "ordinalValue": 2,
+              "images": [],
+              "isCorrect": true,
+              "selected": true
+            }
+          ],
+          "response": {
+            "respuestaId": 9001,
+            "textAnswer": null,
+            "numericAnswer": null,
+            "timeUsedSeconds": 14,
+            "answeredAt": "2026-10-01T09:02:10",
+            "graded": true,
+            "scoreObtained": 2.0,
+            "isCorrect": true,
+            "requiresManualReview": false,
+            "observation": null
+          }
+        }
+      ]
+    }
+  ],
+  "disclaimer": "El sistema no emite diagnosticos psicologicos definitivos."
+}

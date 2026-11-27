@@ -40,6 +40,9 @@ public class RecursoMultimedia {
     @Size(max = 128)
     @Column(name = "hash_integridad", length = 128)
     private String hashIntegridad;
+    @Size(max = 128)
+    @Column(name = "clave_subida", length = 128)
+    private String claveSubida;
     @NotNull
     private Boolean esConfidencial;
     @NotNull

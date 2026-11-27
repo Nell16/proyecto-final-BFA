@@ -1,0 +1,85 @@
+{
+  "subtests": [
+    {
+      "id": null,
+      "draftId": "tmp-subtest-1",
+      "sourceId": 20,
+      "status": "CREATED",
+      "code": "MEM-COPY",
+      "name": "Memoria copia",
+      "description": "Desc",
+      "instructions": "Inst",
+      "order": 1,
+      "timeLimitSeconds": 120,
+      "randomizeItems": true,
+      "randomizeOptions": false,
+      "required": true,
+      "strategyId": 1,
+      "items": [
+        {
+          "id": null,
+          "draftId": "tmp-item-1",
+          "sourceId": 30,
+          "status": "CREATED",
+          "code": "I-1",
+          "itemType": "TEXTO_E_IMAGEN",
+          "responseType": "OPCION_UNICA",
+          "prompt": "Pregunta",
+          "instruction": "Seleccione",
+          "order": 1,
+          "baseScore": 1,
+          "timeLimitSeconds": null,
+          "required": true,
+          "confidential": true,
+          "images": [
+            {
+              "id": null,
+              "draftId": "tmp-image-1",
+              "sourceId": 60,
+              "resourceId": 70,
+              "status": "CREATED",
+              "order": 1,
+              "altText": "Figura",
+              "role": "ENUNCIADO"
+            }
+          ],
+          "options": [
+            {
+              "id": null,
+              "draftId": "tmp-option-1",
+              "sourceId": 40,
+              "status": "CREATED",
+              "code": "A",
+              "text": "Opción A",
+              "order": 1,
+              "ordinalValue": 1,
+              "images": []
+            }
+          ],
+          "answerKey": {
+            "id": null,
+            "draftId": "tmp-key-1",
+            "sourceId": 50,
+            "status": "CREATED",
+            "ruleId": 80,
+            "correctOptionDraftId": "tmp-option-1",
+            "correctOptionId": null,
+            "expectedText": null,
+            "expectedNumber": null,
+            "numericTolerance": null,
+            "score": 1,
+            "requiresManualReview": false
+          }
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "draftId": null,
+      "sourceId": null,
+      "status": "DELETED",
+      "code": "OLD",
+      "name": "Obsoleto"
+    }
+  ]
+}

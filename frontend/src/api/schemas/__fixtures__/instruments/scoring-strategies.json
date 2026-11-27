@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "codigo": "CLAVE_SIMPLE",
+    "nombre": "Clave de respuesta simple",
+    "descripcion": "Calificación dicotómica por clave",
+    "tipoEstrategia": "CLAVE_SIMPLE",
+    "activa": true,
+    "requiereRevisionManual": false,
+    "permiteBaremo": true,
+    "fechaCreacion": "2026-06-01T08:00:00"
+  }
+]

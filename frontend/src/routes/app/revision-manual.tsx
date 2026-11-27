@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ReviewTrayScreen } from "../../app/components/screens/admin/review-tray";
+import { ReviewTrayPage } from "../../features/results/review/ReviewTrayPage";
+import { requireRoutePermission } from "../../store/routePermissions";
 
 export const Route = createFileRoute("/app/revision-manual")({
-  component: ReviewTrayScreen,
+  beforeLoad: requireRoutePermission("/app/revision-manual"),
+  component: ReviewTrayPage,
 });

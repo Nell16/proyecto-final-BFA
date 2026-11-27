@@ -22,7 +22,12 @@ public record SubtestCloneTemplateDTO(Long sourceSubtestId, String code, String 
     }
 
     public record ImageTemplate(Long sourceImageId, Long resourceId, Integer order, String altText,
-            String storagePath, String role) {
+            String storagePath, String role, String originalFileName, Long sizeBytes, String sha256,
+            String uploadKey) {
+        public ImageTemplate(Long sourceImageId, Long resourceId, Integer order, String altText,
+                String storagePath, String role) {
+            this(sourceImageId, resourceId, order, altText, storagePath, role, null, null, null, null);
+        }
     }
 
     public record AnswerKeyTemplate(Long sourceAnswerKeyId, Long sourceRuleId, Long correctOptionSourceId,

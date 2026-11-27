@@ -9,21 +9,24 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({
-  icon = <FolderOpen className="h-12 w-12 text-muted-foreground/60" />,
+  icon = <FolderOpen className="size-6 text-muted-foreground" aria-hidden="true" />,
   title = "No se encontraron datos",
   description = "No hay registros disponibles para mostrar en este momento.",
   action,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center text-center p-8 border border-dashed rounded-lg bg-muted/20 min-h-[300px]">
-      <div className="flex items-center justify-center w-20 h-20 rounded-full bg-muted mb-4">
+    <div
+      data-slot="empty-state"
+      className="flex min-h-[260px] flex-col items-center justify-center rounded-lg border border-border bg-card px-6 py-10 text-center shadow-[var(--shadow-xs)]"
+    >
+      <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
         {icon}
       </div>
-      <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-      <p className="text-sm text-muted-foreground max-w-sm mt-2 mb-6">
+      <h3 className="text-base font-semibold text-foreground">{title}</h3>
+      <p className="mt-1.5 max-w-sm text-sm text-muted-foreground">
         {description}
       </p>
-      {action && <div className="flex justify-center">{action}</div>}
+      {action && <div className="mt-5 flex justify-center">{action}</div>}
     </div>
   );
 }

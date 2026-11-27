@@ -235,6 +235,163 @@ class ResultQueryServiceTest {
         assertThat(view.totalScore()).isEqualByComparingTo("35.00");
     }
 
+    @Test
+    void detalleNoMarcaIncorrectoUnItemPendienteDeRevisionManualYUsaLaCalificacion() {
+        DetalleEscenario d = detalleEscenario(com.uam.psychoform.instrument.model.TipoRespuesta.TEXTO_ABIERTO);
+        d.calificacion.setRequiereRevisionManual(true);
+        d.calificacion.setEsCorrecta(false);
+        d.respuesta.setRequiereRevisionManual(false);
+
+        ResultQueryService.ResponseDetailView pendiente = detalleDelItem(d);
+
+        assertThat(pendiente.requiresManualReview()).isTrue();
+        assertThat(pendiente.isCorrect()).isNull();
+
+        // Ya adjudicada: la calificacion manda sobre la marca vieja de la respuesta (que sigue en true).
+        d.calificacion.setRequiereRevisionManual(false);
+        d.calificacion.setEsCorrecta(true);
+        d.calificacion.setPuntajeObtenido(new BigDecimal("4.00"));
+        d.respuesta.setRequiereRevisionManual(true);
+
+        ResultQueryService.ResponseDetailView revisada = detalleDelItem(d);
+
+        assertThat(revisada.requiresManualReview()).isFalse();
+        assertThat(revisada.isCorrect()).isTrue();
+        assertThat(revisada.scoreObtained()).isEqualByComparingTo("4.00");
+    }
+
+    @Test
+    void detalleMarcaCorrectasLasOpcionesDelTextoEsperadoComoLaCalificacion() {
+        DetalleEscenario d = detalleEscenario(com.uam.psychoform.instrument.model.TipoRespuesta.OPCION_MULTIPLE);
+        d.opciones.addAll(List.of(opcion(1L, "A", d.item), opcion(2L, "B", d.item), opcion(3L, "C", d.item),
+                opcion(4L, "D", d.item)));
+        d.clave.setTextoEsperado("C, d");
+        d.clave.setOpcionCorrecta(d.opciones.get(1)); // B: la precedencia manda sobre la opcion singular
+
+        assertThat(opcionesCorrectas(d)).containsExactly("C", "D");
+    }
+
+    @Test
+    void detalleUsaLasFilasDelConjuntoAntesQueElTextoEsperadoYLaOpcionSingular() {
+        DetalleEscenario d = detalleEscenario(com.uam.psychoform.instrument.model.TipoRespuesta.OPCION_MULTIPLE);
+        d.opciones.addAll(List.of(opcion(1L, "A", d.item), opcion(2L, "B", d.item), opcion(3L, "C", d.item)));
+        d.clave.setTextoEsperado("B");
+        d.clave.setOpcionCorrecta(d.opciones.get(1));
+        when(claves.findOptionSetRowsByKeyIds(List.of(41L))).thenReturn(List.<Object[]>of(
+                new Object[] {41L, 1L}, new Object[] {41L, 3L}));
+
+        assertThat(opcionesCorrectas(d)).containsExactly("A", "C");
+    }
+
+    @Test
+    void detalleDeOpcionUnicaMarcaLaOpcionCorrectaSingular() {
+        DetalleEscenario d = detalleEscenario(com.uam.psychoform.instrument.model.TipoRespuesta.OPCION_UNICA);
+        d.opciones.addAll(List.of(opcion(1L, "A", d.item), opcion(2L, "B", d.item)));
+        d.clave.setTextoEsperado("A");
+        d.clave.setOpcionCorrecta(d.opciones.get(1));
+
+        assertThat(opcionesCorrectas(d)).containsExactly("B");
+    }
+
+    private List<String> opcionesCorrectas(DetalleEscenario d) {
+        return service.getDetailedAttemptResult(7L).subtests().getFirst().items().getFirst().options().stream()
+                .filter(ResultQueryService.OptionDetailedResponseView::isCorrect)
+                .map(ResultQueryService.OptionDetailedResponseView::code)
+                .toList();
+    }
+
+    private static com.uam.psychoform.instrument.model.OpcionItem opcion(long id, String code,
+            com.uam.psychoform.instrument.model.Item item) {
+        com.uam.psychoform.instrument.model.OpcionItem option = new com.uam.psychoform.instrument.model.OpcionItem();
+        option.setId(id);
+        option.setItem(item);
+        option.setCodigoOpcion(code);
+        option.setTextoOpcion("Opcion " + code);
+        option.setNumeroOrden((int) id);
+        return option;
+    }
+
+    private ResultQueryService.ResponseDetailView detalleDelItem(DetalleEscenario d) {
+        return service.getDetailedAttemptResult(7L).subtests().getFirst().items().getFirst().response();
+    }
+
+    private final class DetalleEscenario {
+        com.uam.psychoform.assessment.model.RespuestaItem respuesta;
+        com.uam.psychoform.scoring.model.CalificacionRespuesta calificacion;
+        com.uam.psychoform.instrument.model.ClaveRespuesta clave;
+        com.uam.psychoform.instrument.model.Item item;
+        java.util.List<com.uam.psychoform.instrument.model.OpcionItem> opciones = new java.util.ArrayList<>();
+    }
+
+    /** Intento 7 con un subtest, un item del tipo dado, su respuesta, su calificacion y su clave oficial. */
+    private DetalleEscenario detalleEscenario(com.uam.psychoform.instrument.model.TipoRespuesta tipo) {
+        DetalleEscenario d = new DetalleEscenario();
+        IntentoTest intento = Mockito.mock(IntentoTest.class);
+        AsignacionTest asignacion = Mockito.mock(AsignacionTest.class);
+        com.uam.psychoform.academic.model.Participante participante = new com.uam.psychoform.academic.model.Participante();
+        participante.setNombres("Ana");
+        participante.setApellidos("Lopez");
+        participante.setCodigoParticipante("2026-0003");
+        com.uam.psychoform.assessment.model.SesionAplicacion sesion = new com.uam.psychoform.assessment.model.SesionAplicacion();
+        sesion.setId(5L);
+        VersionTest version = new VersionTest();
+        version.setId(100L);
+        version.setNumeroVersion("v1.0");
+        com.uam.psychoform.instrument.model.TestPsicologico test = new com.uam.psychoform.instrument.model.TestPsicologico();
+        test.setNombreTest("BFA");
+        version.setTest(test);
+        sesion.setVersionTest(version);
+        when(intento.getAsignacion()).thenReturn(asignacion);
+        when(asignacion.getParticipante()).thenReturn(participante);
+        when(asignacion.getSesionAplicacion()).thenReturn(sesion);
+        when(intento.getEstado()).thenReturn(com.uam.psychoform.assessment.model.EstadoIntento.COMPLETADO);
+
+        com.uam.psychoform.instrument.model.Subtest subtest = new com.uam.psychoform.instrument.model.Subtest();
+        subtest.setId(11L);
+        subtest.setNombreSubtest("Verbal");
+        subtest.setCodigoSubtest("VERB");
+        com.uam.psychoform.assessment.model.SesionSubtest sesionSubtest = new com.uam.psychoform.assessment.model.SesionSubtest();
+        sesionSubtest.setSubtest(subtest);
+        sesionSubtest.setNumeroOrden(1);
+        d.item = new com.uam.psychoform.instrument.model.Item();
+        d.item.setId(21L);
+        d.item.setSubtest(subtest);
+        d.item.setCodigoItem("V-1");
+        d.item.setNumeroOrden(1);
+        d.item.setEnunciado("Pregunta");
+        d.item.setTipoItem(com.uam.psychoform.instrument.model.TipoItem.values()[0]);
+        d.item.setTipoRespuesta(tipo);
+        d.item.setEsObligatorio(true);
+
+        d.respuesta = new com.uam.psychoform.assessment.model.RespuestaItem();
+        d.respuesta.setId(31L);
+        d.respuesta.setItem(d.item);
+        d.respuesta.setIntento(intento);
+        d.calificacion = new com.uam.psychoform.scoring.model.CalificacionRespuesta();
+        d.calificacion.setRespuesta(d.respuesta);
+        d.calificacion.setPuntajeObtenido(BigDecimal.ZERO);
+        d.clave = new com.uam.psychoform.instrument.model.ClaveRespuesta();
+        d.clave.setId(41L);
+        d.clave.setItem(d.item);
+
+        Resultado resultado = new Resultado();
+        resultado.setId(8L);
+        resultado.setPuntajeTotalDirecto(BigDecimal.ZERO);
+        when(intentos.findByIdWithAsignacionAndParticipanteAndSesion(7L)).thenReturn(Optional.of(intento));
+        when(resultados.findByIntentoId(7L)).thenReturn(Optional.of(resultado));
+        when(dimensiones.findByResultadoId(8L)).thenReturn(List.of());
+        when(baremos.findPreferredTotalBaremo(Mockito.anyLong())).thenReturn(Optional.empty());
+        when(calificaciones.findByResultadoId(8L)).thenReturn(List.of(d.calificacion));
+        when(sesionSubtests.findBySesionAplicacionIdWithSubtestOrderByNumeroOrdenAsc(5L)).thenReturn(List.of(sesionSubtest));
+        when(items.findBySubtestIdInAndEstadoOrderBySubtestAndItemOrder(Mockito.anyCollection(), Mockito.any()))
+                .thenReturn(List.of(d.item));
+        when(opciones.findByItemIdInAndEstadoOrderByItemAndOptionOrder(Mockito.anyCollection(), Mockito.any()))
+                .thenAnswer(invocation -> d.opciones);
+        when(claves.findOfficialKeysByVersionId(100L)).thenReturn(List.of(d.clave));
+        when(respuestas.findByIntentoIdWithItem(7L)).thenReturn(List.of(d.respuesta));
+        return d;
+    }
+
     private static IntentoTest intentoConVersion(Long versionId) {
         VersionTest version = new VersionTest();
         version.setId(versionId);

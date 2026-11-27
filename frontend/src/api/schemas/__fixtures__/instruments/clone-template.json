@@ -1,0 +1,70 @@
+{
+  "sourceSubtestId": 20,
+  "code": "MEM",
+  "name": "Memoria Visual",
+  "description": "Evaluación de memoria visual inmediata",
+  "instructions": "Observe las figuras y seleccione la coincidencia.",
+  "order": 1,
+  "timeLimitSeconds": 600,
+  "randomizeItems": true,
+  "randomizeOptions": false,
+  "required": true,
+  "strategyId": 1,
+  "estado": "ACTIVO",
+  "items": [
+    {
+      "sourceItemId": 30,
+      "code": "IT-1",
+      "itemType": "TEXTO_E_IMAGEN",
+      "responseType": "OPCION_UNICA",
+      "prompt": "¿Qué figura completa la serie?",
+      "instruction": "Seleccione una opción.",
+      "order": 1,
+      "baseScore": 1,
+      "timeLimitSeconds": null,
+      "required": true,
+      "confidential": true,
+      "estado": "ACTIVO",
+      "images": [
+        {
+          "sourceImageId": 60,
+          "resourceId": 70,
+          "order": 1,
+          "altText": "Figura base",
+          "storagePath": "test-config/items/30/a.png",
+          "role": "ENUNCIADO"
+        }
+      ],
+      "options": [
+        {
+          "sourceOptionId": 40,
+          "code": "A",
+          "text": "Opción A",
+          "order": 1,
+          "ordinalValue": 1,
+          "estado": "ACTIVO",
+          "images": [
+            {
+              "sourceImageId": 61,
+              "resourceId": 71,
+              "order": 1,
+              "altText": "Opción A",
+              "storagePath": "test-config/options/40/a.png",
+              "role": null
+            }
+          ]
+        }
+      ],
+      "answerKey": {
+        "sourceAnswerKeyId": 50,
+        "sourceRuleId": 80,
+        "correctOptionSourceId": 40,
+        "expectedText": null,
+        "expectedNumber": null,
+        "numericTolerance": null,
+        "score": 1,
+        "requiresManualReview": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "data": {
+    "id": 305,
+    "intentoId": 101,
+    "sesionSubtestId": 55,
+    "subtestId": 10,
+    "iniciadoEn": "2026-11-24T15:05:00",
+    "finalizadoEn": null,
+    "estado": "EN_PROGRESO",
+    "tiempoUsadoSegundos": null,
+    "startedAt": "2026-11-24T15:05:00-06:00",
+    "timeLimitSeconds": 600,
+    "remainingSeconds": 600,
+    "paused": false,
+    "serverNow": "2026-11-24T15:05:00-06:00"
+  },
+  "correlationId": "req-start-subtest"
+}

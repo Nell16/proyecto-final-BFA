@@ -1,0 +1,20 @@
+[
+  {
+    "id": 40,
+    "codigoOpcion": "A",
+    "textoOpcion": "Opción A",
+    "numeroOrden": 1,
+    "valorOrdinal": 1,
+    "estado": "ACTIVO",
+    "imagenes": [
+      {
+        "id": 66,
+        "numeroOrden": 1,
+        "textoAlternativo": "Opción",
+        "rutaAlmacenamiento": "test-config/options/40/file.png",
+        "url": null,
+        "rol": null
+      }
+    ]
+  }
+]

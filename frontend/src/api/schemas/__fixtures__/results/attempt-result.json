@@ -1,0 +1,26 @@
+{
+  "attemptId": 42,
+  "resultId": 15,
+  "status": "CALCULADO",
+  "totalScore": 18.0,
+  "totalInterpretation": {
+    "baremoId": 3,
+    "baremoCode": "BAR-TOT-01",
+    "rangeId": 12,
+    "category": "Moderado",
+    "percentile": 65.0,
+    "interpretation": "Nivel moderado dentro del rango esperado.",
+    "recommendation": "Seguimiento preventivo."
+  },
+  "dimensions": [
+    {
+      "dimensionId": 5,
+      "name": "Somática",
+      "directScore": 10.0,
+      "category": "Medio",
+      "percentile": 60.0,
+      "interpretation": "Indicadores somáticos moderados."
+    }
+  ],
+  "disclaimer": "El sistema no emite diagnosticos psicologicos definitivos."
+}

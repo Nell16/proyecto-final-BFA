@@ -1,0 +1,26 @@
+[
+  {
+    "id": 3,
+    "tipoReporte": "INDIVIDUAL",
+    "intentoId": 42,
+    "resultadoId": 15,
+    "sesionAplicacionId": null,
+    "generadoPorId": "11111111-1111-1111-1111-111111111111",
+    "generadoEn": "2026-10-01T09:30:00",
+    "formato": "PDF",
+    "rutaAlmacenamiento": "/reports/individual-42.pdf",
+    "resumenFiltros": "{\"attemptId\":42}"
+  },
+  {
+    "id": 4,
+    "tipoReporte": "AGREGADO",
+    "intentoId": null,
+    "resultadoId": null,
+    "sesionAplicacionId": 10,
+    "generadoPorId": "11111111-1111-1111-1111-111111111111",
+    "generadoEn": "2026-10-02T14:15:00",
+    "formato": "XLSX",
+    "rutaAlmacenamiento": "/reports/session-10.xlsx",
+    "resumenFiltros": "{\"sessionId\":10}"
+  }
+]

@@ -2,83 +2,281 @@
 
 :root {
   --font-size: 16px;
-  --background: #ffffff;
-  --foreground: oklch(0.145 0 0);
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Superficies */
+  --background: #f5f8f9;
   --card: #ffffff;
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: #0f2649;
+  --popover: #ffffff;
+  --muted: #edf3f4;
+  --input-background: #ffffff;
+  --switch-background: #76859b;
+
+  /* Texto */
+  --foreground: #13262a;
+  --card-foreground: #13262a;
+  --popover-foreground: #13262a;
+  --muted-foreground: #475a5e;
+  --text-tertiary: #5f7074;
+
+  /*
+   * Marca UAM (identidad "UAM Virtual"): teal institucional.
+   * --brand (#0099a8) es el teal de la marca; se usa en superficies decorativas,
+   *   logotipo y acentos. Con texto blanco solo alcanza 3.43:1, así que NO lleva texto pequeño.
+   * --primary (#007c87): teal accesible para botones, enlaces y títulos:
+   *   4.96:1 con blanco y 4.68:1 sobre --background.
+   * --brand-deep (#036a70): teal profundo de la marca (hover, texto activo): 6.36:1 con blanco.
+   */
+  --brand: #0099a8;
+  --brand-deep: #036a70;
+  --brand-soft: #e6f6f6;
+  --primary: #007c87;
+  --primary-hover: #036a70;
   --primary-foreground: #ffffff;
-  --secondary: #eef2f7;
-  --secondary-foreground: #0f2649;
-  --muted: #f1f4f8;
-  --muted-foreground: #5b6b81;
-  --accent: #e3ebf5;
-  --accent-foreground: #0f2649;
+  --secondary: #e6f6f6;
+  --secondary-foreground: #035a60;
+  --accent: #dff1f2;
+  --accent-foreground: #035a60;
+
+  /*
+   * Bordes y foco — WCAG 2.1 SC 1.4.11 (contraste >= 3:1 para controles interactivos)
+   * --border (#dce3ec): separadores decorativos (sin requisito de 3:1).
+   * --input (#76859b): borde interactivo de controles (Input, SelectTrigger, Textarea,
+   *   Checkbox, RadioGroupItem, Button outline, Toggle/ToggleGroup outline, Slider track):
+   *   3.75:1 vs --card/--input-background (#ffffff), 3.53:1 vs --background (#f6f8fb),
+   *   3.34:1 vs --muted (#eef2f7) y 3.09:1 vs --accent (#e1eaf6).
+   * --switch-background (#76859b): track de Switch apagado (mismo valor que --input):
+   *   3.75:1 vs --card (#ffffff), 3.53:1 vs --background (#f6f8fb);
+   *   thumb --card (#ffffff) 3.75:1 sobre track.
+   * --border-strong (#64748b): borde enfatizado / interactivo:
+   *   4.76:1 vs --input-background (#ffffff) y 4.47:1 vs --background (#f6f8fb).
+   */
+  --border: #d9e4e6;
+  --border-strong: #64748b;
+  --input: #76859b;
+  --ring: #007c87;
+
+  /* Destructivo (alias de danger sólido para compatibilidad shadcn) */
   --destructive: #b91c1c;
   --destructive-foreground: #ffffff;
-  --border: rgba(0, 0, 0, 0.1);
-  --input: transparent;
-  --input-background: #f3f3f5;
-  --switch-background: #cbced4;
-  --font-weight-medium: 500;
-  --font-weight-normal: 400;
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: #030213;
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Estados semánticos */
+  --status-success-bg: #ecfdf5;
+  --status-success-fg: #065f46;
+  --status-success-border: #a7f3d0;
+  --status-success-solid: #047857;
+  --success: #047857;
+  --success-foreground: #065f46;
+  --success-muted: #ecfdf5;
+  --success-border: #a7f3d0;
+
+  --status-warning-bg: #fffbeb;
+  --status-warning-fg: #92400e;
+  --status-warning-border: #fde68a;
+  --status-warning-solid: #b45309;
+  --warning: #b45309;
+  --warning-foreground: #92400e;
+  --warning-muted: #fffbeb;
+  --warning-border: #fde68a;
+
+  --status-danger-bg: #fef2f2;
+  --status-danger-fg: #991b1b;
+  --status-danger-border: #fecaca;
+  --status-danger-solid: #b91c1c;
+  --danger: #b91c1c;
+  --danger-foreground: #991b1b;
+  --danger-muted: #fef2f2;
+  --danger-border: #fecaca;
+
+  --status-info-bg: #eff6ff;
+  --status-info-fg: #1e40af;
+  --status-info-border: #bfdbfe;
+  --status-info-solid: #1d4ed8;
+  --info: #1d4ed8;
+  --info-foreground: #1e40af;
+  --info-muted: #eff6ff;
+  --info-border: #bfdbfe;
+
+  --status-neutral-bg: #f1f5f9;
+  --status-neutral-fg: #334155;
+  --status-neutral-border: #cbd5e1;
+  --status-neutral-solid: #475569;
+  --neutral: #475569;
+  --neutral-foreground: #334155;
+  --neutral-muted: #f1f5f9;
+  --neutral-border: #cbd5e1;
+
+  /* Gráficos (teal UAM como serie principal) */
+  --chart-1: #0099a8;
+  --chart-2: #036a70;
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.6 0.15 250);
+  --chart-5: oklch(0.646 0.222 41.116);
+
+  /*
+   * Sidebar institucional (estilo UAM Virtual): fondo teal con la navegación en una
+   * tarjeta blanca. --sidebar (#00808c) da 4.70:1 con blanco para el texto que va
+   * directo sobre el fondo; los ítems usan --sidebar-panel / --sidebar-panel-foreground.
+   */
+  --sidebar: #00808c;
+  --sidebar-foreground: #ffffff;
+  --sidebar-panel: #ffffff;
+  --sidebar-panel-foreground: #3d4a4d;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #036a70;
+  --sidebar-accent: #e6f6f6;
+  --sidebar-accent-foreground: #036a70;
+  --sidebar-border: rgba(255, 255, 255, 0.18);
+  --sidebar-ring: #007c87;
+
+  /* Radios y sombras */
+  --radius: 0.5rem;
+  --shadow-xs: 0 1px 2px rgba(3, 60, 66, 0.05);
+  --shadow-sm: 0 1px 3px rgba(3, 60, 66, 0.07), 0 1px 2px rgba(3, 60, 66, 0.04);
+  --shadow-md: 0 6px 16px rgba(3, 60, 66, 0.09);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --chart-1: oklch(0.488 0.243 264.376);
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Superficies */
+  --background: #0b1416;
+  --card: #101e21;
+  --popover: #15272b;
+  --muted: #172a2e;
+  --input-background: #0e1b1e;
+  --switch-background: #6f86ad;
+
+  /* Texto */
+  --foreground: #f1f5f9;
+  --card-foreground: #f1f5f9;
+  --popover-foreground: #f1f5f9;
+  --muted-foreground: #94a3b8;
+  --text-tertiary: #7c8da6;
+
+  /* Marca UAM (dark): teal claro, 8.4:1 sobre --background */
+  --brand: #2cc4d1;
+  --brand-deep: #0099a8;
+  --brand-soft: #0f2f33;
+  --primary: #2cc4d1;
+  --primary-hover: #5cd3dd;
+  --primary-foreground: #04252a;
+  --secondary: #16302f;
+  --secondary-foreground: #e2f1f2;
+  --accent: #1a3a3e;
+  --accent-foreground: #f1f8f9;
+
+  /*
+   * Bordes y foco (dark) — WCAG 2.1 SC 1.4.11 (contraste >= 3:1 para controles interactivos)
+   * --border (#23324d): separadores decorativos (sin requisito de 3:1).
+   * --input (#6f86ad): borde interactivo de controles (Input, SelectTrigger, Textarea,
+   *   Checkbox, RadioGroupItem, Button outline, Toggle/ToggleGroup outline, Slider track):
+   *   5.10:1 vs --background (#0b1120), 4.84:1 vs --input-background (#0f172a),
+   *   4.70:1 vs --card (#111a2e), 4.29:1 vs --popover (#16223b),
+   *   4.19:1 vs --muted (#18243d), 3.52:1 vs --accent (#1e3152) y
+   *   3.08:1 vs dark:bg-input/30 sobre --card.
+   * --switch-background (#6f86ad): track de Switch apagado (mismo valor que --input):
+   *   5.10:1 vs --background (#0b1120), 4.70:1 vs --card (#111a2e),
+   *   4.29:1 vs --popover (#16223b); thumb --card-foreground (#f1f5f9) 3.37:1 sobre track.
+   * --border-strong (#7c93ba): borde enfatizado / interactivo:
+   *   6.04:1 vs --background (#0b1120), 5.73:1 vs --input-background (#0f172a)
+   *   y 5.57:1 vs --card (#111a2e).
+   */
+  --border: #23383c;
+  --border-strong: #7c93ba;
+  --input: #6f86ad;
+  --ring: #2cc4d1;
+
+  /* Destructivo */
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  /* Estados semánticos */
+  --status-success-bg: #062b22;
+  --status-success-fg: #6ee7b7;
+  --status-success-border: #0f513d;
+  --status-success-solid: #10b981;
+  --success: #10b981;
+  --success-foreground: #6ee7b7;
+  --success-muted: #062b22;
+  --success-border: #0f513d;
+
+  --status-warning-bg: #2d1e08;
+  --status-warning-fg: #fcd34d;
+  --status-warning-border: #6b440e;
+  --status-warning-solid: #f59e0b;
+  --warning: #f59e0b;
+  --warning-foreground: #fcd34d;
+  --warning-muted: #2d1e08;
+  --warning-border: #6b440e;
+
+  --status-danger-bg: #2e1015;
+  --status-danger-fg: #fca5a5;
+  --status-danger-border: #6f1d29;
+  --status-danger-solid: #dc2626;
+  --danger: #dc2626;
+  --danger-foreground: #fca5a5;
+  --danger-muted: #2e1015;
+  --danger-border: #6f1d29;
+
+  --status-info-bg: #0f2042;
+  --status-info-fg: #93c5fd;
+  --status-info-border: #1e3f7a;
+  --status-info-solid: #3b82f6;
+  --info: #3b82f6;
+  --info-foreground: #93c5fd;
+  --info-muted: #0f2042;
+  --info-border: #1e3f7a;
+
+  --status-neutral-bg: #1e293b;
+  --status-neutral-fg: #cbd5e1;
+  --status-neutral-border: #334155;
+  --status-neutral-solid: #64748b;
+  --neutral: #64748b;
+  --neutral-foreground: #cbd5e1;
+  --neutral-muted: #1e293b;
+  --neutral-border: #334155;
+
+  /* Gráficos */
+  --chart-1: #2cc4d1;
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+
+  /* Sidebar institucional */
+  --sidebar: #082024;
+  --sidebar-foreground: #e2f1f2;
+  --sidebar-panel: #10292d;
+  --sidebar-panel-foreground: #cfe3e5;
+  --sidebar-primary: #2cc4d1;
+  --sidebar-primary-foreground: #04252a;
+  --sidebar-accent: rgba(44, 196, 209, 0.16);
+  --sidebar-accent-foreground: #f1f8f9;
+  --sidebar-border: #1b3438;
+  --sidebar-ring: #2cc4d1;
+
+  /* Sombras */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.45);
 }
 
 @theme inline {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Poppins", "Inter", system-ui, -apple-system, sans-serif;
+
+  --color-brand: var(--brand);
+  --color-brand-deep: var(--brand-deep);
+  --color-brand-soft: var(--brand-soft);
+  --color-sidebar-panel: var(--sidebar-panel);
+  --color-sidebar-panel-foreground: var(--sidebar-panel-foreground);
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -86,29 +284,87 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-text-tertiary: var(--text-tertiary);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-input: var(--input);
   --color-input-background: var(--input-background);
   --color-switch-background: var(--switch-background);
   --color-ring: var(--ring);
+
+  /* Tokens semánticos cortos */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-muted: var(--success-muted);
+  --color-success-border: var(--success-border);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-muted: var(--warning-muted);
+  --color-warning-border: var(--warning-border);
+
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-danger-muted: var(--danger-muted);
+  --color-danger-border: var(--danger-border);
+
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-muted: var(--info-muted);
+  --color-info-border: var(--info-border);
+
+  --color-neutral: var(--neutral);
+  --color-neutral-foreground: var(--neutral-foreground);
+  --color-neutral-muted: var(--neutral-muted);
+  --color-neutral-border: var(--neutral-border);
+
+  /* Alias semánticos --status-* de la especificación */
+  --color-status-success-bg: var(--status-success-bg);
+  --color-status-success-fg: var(--status-success-fg);
+  --color-status-success-border: var(--status-success-border);
+  --color-status-success-solid: var(--status-success-solid);
+
+  --color-status-warning-bg: var(--status-warning-bg);
+  --color-status-warning-fg: var(--status-warning-fg);
+  --color-status-warning-border: var(--status-warning-border);
+  --color-status-warning-solid: var(--status-warning-solid);
+
+  --color-status-danger-bg: var(--status-danger-bg);
+  --color-status-danger-fg: var(--status-danger-fg);
+  --color-status-danger-border: var(--status-danger-border);
+  --color-status-danger-solid: var(--status-danger-solid);
+
+  --color-status-info-bg: var(--status-info-bg);
+  --color-status-info-fg: var(--status-info-fg);
+  --color-status-info-border: var(--status-info-border);
+  --color-status-info-solid: var(--status-info-solid);
+
+  --color-status-neutral-bg: var(--status-neutral-bg);
+  --color-status-neutral-fg: var(--status-neutral-fg);
+  --color-status-neutral-border: var(--status-neutral-border);
+  --color-status-neutral-solid: var(--status-neutral-solid);
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -125,57 +381,54 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
   }
-
-  /**
-  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
-  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
-  */
 
   html {
     font-size: var(--font-size);
   }
 
   h1 {
-    font-size: var(--text-2xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.4;
   }
 
   h2 {
-    font-size: var(--text-xl);
-    font-weight: var(--font-weight-medium);
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-semibold);
     line-height: 1.5;
   }
 
   h3 {
-    font-size: var(--text-lg);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.43;
   }
 
   h4 {
-    font-size: var(--text-base);
+    font-size: var(--text-sm);
     font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    line-height: 1.43;
   }
 
   label {
-    font-size: var(--text-base);
+    font-size: var(--text-sm);
     font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    line-height: 1.43;
   }
 
   button {
-    font-size: var(--text-base);
+    font-size: var(--text-sm);
     font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    line-height: 1.43;
   }
 
   input {
-    font-size: var(--text-base);
+    font-size: var(--text-sm);
     font-weight: var(--font-weight-normal);
-    line-height: 1.5;
+    line-height: 1.43;
   }
 }

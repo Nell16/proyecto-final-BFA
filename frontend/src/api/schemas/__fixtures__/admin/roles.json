@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "nombre": "ADMIN",
+    "descripcion": "Administrador del sistema"
+  },
+  {
+    "id": 2,
+    "nombre": "PSICOLOGO",
+    "descripcion": "Evaluador clínico"
+  }
+]

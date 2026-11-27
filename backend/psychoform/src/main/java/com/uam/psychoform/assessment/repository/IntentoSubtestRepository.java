@@ -12,6 +12,22 @@ public interface IntentoSubtestRepository extends JpaRepository<IntentoSubtest, 
 
     List<IntentoSubtest> findByIntentoId(Long intentoId);
 
+    /** Subtests en curso con limite de tiempo: candidatos al cierre automatico por tiempo agotado. */
+    @Query("""
+            select i.intento.id as intentoId, i.id as intentoSubtestId
+            from IntentoSubtest i
+            where i.estado = :#{T(com.uam.psychoform.assessment.model.EstadoIntento).EN_PROGRESO}
+              and i.iniciadoEn is not null
+              and i.sesionSubtest.tiempoLimiteSegundos is not null
+            """)
+    List<CierreCandidato> findCandidatosCierrePorTiempo();
+
+    interface CierreCandidato {
+        Long getIntentoId();
+
+        Long getIntentoSubtestId();
+    }
+
     @Query("""
             select i from IntentoSubtest i
             join fetch i.subtest

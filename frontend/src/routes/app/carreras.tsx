@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CarrerasScreen } from "../../app/components/screens/catalog-screens";
+import { requireRoutePermission } from "../../store/routePermissions";
+import { CatalogPage } from "../../features/catalogs/components/catalog-page";
+import { CAREER_CATALOG } from "../../features/catalogs/definitions";
 
 export const Route = createFileRoute("/app/carreras")({
-  component: CarrerasScreen,
+  beforeLoad: requireRoutePermission("/app/carreras"),
+  component: () => <CatalogPage definition={CAREER_CATALOG} />,
 });

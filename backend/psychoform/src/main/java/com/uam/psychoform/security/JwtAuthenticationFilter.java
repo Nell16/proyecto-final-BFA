@@ -1,5 +1,6 @@
 package com.uam.psychoform.security;
 
+import com.uam.psychoform.security.service.JwtExpiredException;
 import com.uam.psychoform.security.service.JwtService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -31,6 +32,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 var a = p.permisos().stream().map(x -> new SimpleGrantedAuthority("PERM_" + x))
                         .collect(Collectors.toSet());
                 SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(p, p, a));
+            } catch (JwtExpiredException e) {
+                if (e.roles().contains("PARTICIPANTE"))
+                    errors.conflict(s, "TOKEN_EXPIRADO", "El acceso del participante expiro");
+                else
+                    errors.unauthorized(s);
+                return;
             } catch (IllegalArgumentException e) {
                 errors.unauthorized(s);
                 return;

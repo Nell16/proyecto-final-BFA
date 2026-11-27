@@ -1,0 +1,22 @@
+[
+  {
+    "id": 90,
+    "versionTestId": 10,
+    "dimensionResultado": null,
+    "codigoBaremo": "BAR-GEN",
+    "nombre": "Baremo General 2026",
+    "descripcion": "Normas generales de ingreso",
+    "grupoNormativo": "General",
+    "criterioEdadMinima": 17,
+    "criterioEdadMaxima": 30,
+    "criterioSexo": null,
+    "criterioCarrera": null,
+    "vigenteDesde": "2026-01-01",
+    "vigenteHasta": "2026-12-31",
+    "estado": "BORRADOR",
+    "creadoPorId": "44444444-4444-4444-4444-444444444444",
+    "creadoEn": "2026-06-26T10:40:00",
+    "aprobadoPor": null,
+    "aprobadoEn": null
+  }
+]

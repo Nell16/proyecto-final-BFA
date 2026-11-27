@@ -37,15 +37,21 @@ public class JwtService {
     }
 
     public String emitir(UUID id, String username, Set<String> permisos, Set<String> roles) {
+        return emitir(id, username, permisos, roles, Instant.now(clock).plusSeconds(28_800));
+    }
+
+    public String emitir(UUID id, String username, Set<String> permisos, Set<String> roles, Instant expiresAt) {
+        long now = Instant.now(clock).getEpochSecond();
+        if (expiresAt == null || expiresAt.getEpochSecond() <= now)
+            throw new IllegalArgumentException("El vencimiento del JWT debe ser posterior a la fecha actual");
         try {
-            long now = Instant.now(clock).getEpochSecond();
             Map<String, Object> claims = new LinkedHashMap<>();
             claims.put("sub", id.toString());
             claims.put("username", username);
             claims.put("permissions", permisos);
             claims.put("roles", roles);
             claims.put("iat", now);
-            claims.put("exp", now + 28_800);
+            claims.put("exp", expiresAt.getEpochSecond());
             String header = base64("{\"alg\":\"HS256\",\"typ\":\"JWT\"}");
             String payload = base64(JSON.writeValueAsString(claims));
             String signed = header + "." + payload;
@@ -64,7 +70,7 @@ public class JwtService {
             Map<String, Object> claims = JSON.readValue(Base64.getUrlDecoder().decode(parts[1]), new TypeReference<>() {
             });
             if (((Number) claims.get("exp")).longValue() <= Instant.now(clock).getEpochSecond())
-                throw new IllegalArgumentException("JWT expirado");
+                throw new JwtExpiredException(stringSet(claims.get("roles")));
             Set<String> permissions = stringSet(claims.get("permissions"));
             Set<String> roles = stringSet(claims.get("roles"));
             return new JwtPrincipal(UUID.fromString((String) claims.get("sub")), (String) claims.get("username"),

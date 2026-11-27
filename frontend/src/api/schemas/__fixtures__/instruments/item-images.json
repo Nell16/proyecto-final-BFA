@@ -1,0 +1,18 @@
+[
+  {
+    "id": 55,
+    "resourceId": 77,
+    "testId": 1,
+    "versionId": 10,
+    "subtestId": 20,
+    "itemId": 30,
+    "itemOrder": 1,
+    "role": "ENUNCIADO",
+    "order": 1,
+    "altText": "Figura",
+    "fileName": "file.png",
+    "mimeType": "image/png",
+    "sizeBytes": 1024,
+    "url": "/items/images/resources/77"
+  }
+]

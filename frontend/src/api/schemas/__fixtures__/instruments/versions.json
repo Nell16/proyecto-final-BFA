@@ -1,0 +1,34 @@
+[
+  {
+    "id": 10,
+    "testId": 1,
+    "estrategiaCalificacionId": 1,
+    "numeroVersion": "1.0",
+    "estado": "BORRADOR",
+    "instruccionesGenerales": "Lea atentamente cada subtest antes de comenzar.",
+    "tiempoLimiteSegundos": 3600,
+    "permiteAleatorizarSubtests": false,
+    "permiteAleatorizarItems": true,
+    "aprobadoPor": null,
+    "aprobadoEn": null,
+    "publicadoEn": null,
+    "creadoPorId": "44444444-4444-4444-4444-444444444444",
+    "creadoEn": "2026-06-26T10:20:00"
+  },
+  {
+    "id": 11,
+    "testId": 1,
+    "estrategiaCalificacionId": 1,
+    "numeroVersion": "1.1",
+    "estado": "PUBLICADO",
+    "instruccionesGenerales": "Versión publicada oficial.",
+    "tiempoLimiteSegundos": 3600,
+    "permiteAleatorizarSubtests": false,
+    "permiteAleatorizarItems": false,
+    "aprobadoPorId": "44444444-4444-4444-4444-444444444444",
+    "aprobadoEn": "2026-06-27T09:00:00",
+    "publicadoEn": "2026-06-27T09:30:00",
+    "creadoPorId": "44444444-4444-4444-4444-444444444444",
+    "creadoEn": "2026-06-26T11:00:00"
+  }
+]

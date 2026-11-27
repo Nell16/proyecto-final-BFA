@@ -1,0 +1,13 @@
+[
+  {
+    "id": 100,
+    "baremoId": 90,
+    "puntajeMinimo": 0,
+    "puntajeMaximo": 10,
+    "percentil": 25,
+    "categoria": "Bajo",
+    "interpretacion": "Desempeño por debajo del promedio",
+    "recomendacion": "Reforzar habilidades",
+    "orden": 1
+  }
+]

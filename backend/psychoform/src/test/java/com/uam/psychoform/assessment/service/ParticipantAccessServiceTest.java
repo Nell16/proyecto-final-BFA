@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -75,10 +76,11 @@ class ParticipantAccessServiceTest {
         when(asignaciones.findByIdForUpdate(77L)).thenReturn(Optional.of(asignacion));
         when(tokens.matches("raw-token", "hashed-token")).thenReturn(true);
 
-        ParticipantAccessService.ParticipantAccess access = service.grantParticipantAccess(77L, "raw-token");
+        ParticipantAccessService.GrantedParticipantAccess access = service.grantParticipantAccess(77L, "raw-token");
 
         assertThat(access.assignmentId()).isEqualTo(77L);
         assertThat(access.participantId()).isEqualTo(asignacion.getParticipante().getId());
+        assertThat(access.tokenExpiresAt()).isEqualTo(asignacion.getTokenExpiraEn());
         assertThat(asignacion.getTokenUsadoEn()).isEqualTo(LocalDateTime.ofInstant(CLOCK.instant(), ZoneOffset.UTC));
     }
 
@@ -107,11 +109,11 @@ class ParticipantAccessServiceTest {
     }
 
     @Test
-    void validateRuntimeAccessDevuelveContextoSoloSiTokenCoincideConAsignacionActiva() {
+    void validateRuntimeWriteDevuelveContextoSoloSiTokenCoincideConAsignacionActiva() {
         AsignacionTest asignacion = asignacionAbierta();
         when(asignaciones.findByIdForUpdate(77L)).thenReturn(Optional.of(asignacion));
 
-        ParticipantAccessService.ParticipantAccess access = service.validateRuntimeAccess(
+        ParticipantAccessService.ParticipantAccess access = service.validateRuntimeWrite(
                 new ParticipantAccessService.ParticipantAccess(77L, asignacion.getParticipante().getId()));
 
         assertThat(access.assignmentId()).isEqualTo(77L);
@@ -119,27 +121,103 @@ class ParticipantAccessServiceTest {
     }
 
     @Test
-    void validateRuntimeAccessRechazaParticipanteDeOtraAsignacion() {
+    void validateRuntimeWriteRechazaParticipanteDeOtraAsignacion() {
         AsignacionTest asignacion = asignacionAbierta();
         when(asignaciones.findByIdForUpdate(77L)).thenReturn(Optional.of(asignacion));
 
-        assertThatThrownBy(() -> service.validateRuntimeAccess(
+        assertThatThrownBy(() -> service.validateRuntimeWrite(
                 new ParticipantAccessService.ParticipantAccess(77L, UUID.randomUUID())))
                 .isInstanceOf(AccessDeniedException.class)
                 .hasMessageContaining("Asignacion fuera de alcance");
     }
 
     @Test
-    void validateRuntimeAccessExpiraAsignacionSiTokenYaVencio() {
+    void validateRuntimeWriteNoComprueбaElVencimientoDelEnlaceConUnJwtVigente() {
+        // B2: el enlace regenerado (TTL 1 h) ya vencio dos horas despues, pero el JWT emitido antes sigue vigente.
         AsignacionTest asignacion = asignacionAbierta();
-        asignacion.setTokenExpiraEn(LocalDateTime.ofInstant(CLOCK.instant().minusSeconds(1), ZoneOffset.UTC));
+        asignacion.setTokenExpiraEn(LocalDateTime.ofInstant(CLOCK.instant().minusSeconds(3600), ZoneOffset.UTC));
+        asignacion.setIntentosAcceso(0);
         when(asignaciones.findByIdForUpdate(77L)).thenReturn(Optional.of(asignacion));
 
-        assertThatThrownBy(() -> service.validateRuntimeAccess(
-                new ParticipantAccessService.ParticipantAccess(77L, asignacion.getParticipante().getId())))
-                .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("Token expirado");
-        assertThat(asignacion.getEstado()).isEqualTo(EstadoAsignacion.EXPIRADO);
+        ParticipantAccessService.ParticipantAccess access = service.validateRuntimeWrite(accessOf(asignacion));
+
+        assertThat(access.assignmentId()).isEqualTo(77L);
+        assertThat(asignacion.getEstado()).isEqualTo(EstadoAsignacion.ASIGNADO);
+    }
+
+    private ParticipantAccessService.ParticipantAccess accessOf(AsignacionTest a) {
+        return new ParticipantAccessService.ParticipantAccess(77L, a.getParticipante().getId());
+    }
+
+    private AsignacionTest conEstado(EstadoSesionAplicacion estado) {
+        AsignacionTest asignacion = asignacionAbierta();
+        asignacion.getSesionAplicacion().setEstado(estado);
+        when(asignaciones.findByIdForUpdate(77L)).thenReturn(Optional.of(asignacion));
+        return asignacion;
+    }
+
+    @Test
+    void readPermiteAbiertaYPausada() {
+        for (EstadoSesionAplicacion estado : List.of(EstadoSesionAplicacion.ABIERTA, EstadoSesionAplicacion.PAUSADA)) {
+            AsignacionTest a = conEstado(estado);
+            assertThat(service.validateRuntimeRead(accessOf(a)).assignmentId()).isEqualTo(77L);
+        }
+    }
+
+    @Test
+    void writeConSesionPausadaLanzaSesionPausada() {
+        AsignacionTest a = conEstado(EstadoSesionAplicacion.PAUSADA);
+        assertThatThrownBy(() -> service.validateRuntimeWrite(accessOf(a)))
+                .isInstanceOf(SesionPausadaException.class)
+                .extracting(e -> ((ParticipantConflictException) e).getCode()).isEqualTo("SESION_PAUSADA");
+    }
+
+    @Test
+    void writeYReadConSesionProgramadaLanzanSesionNoAbierta() {
+        AsignacionTest a = conEstado(EstadoSesionAplicacion.PROGRAMADA);
+        assertThat(codeOf(() -> service.validateRuntimeWrite(accessOf(a)))).isEqualTo("SESION_NO_ABIERTA");
+        assertThat(codeOf(() -> service.validateRuntimeRead(accessOf(a)))).isEqualTo("SESION_NO_ABIERTA");
+    }
+
+    @Test
+    void writeYReadConSesionFinalizadaLanzanSesionFinalizada() {
+        for (EstadoSesionAplicacion estado : List.of(EstadoSesionAplicacion.CERRADA, EstadoSesionAplicacion.CANCELADA)) {
+            AsignacionTest a = conEstado(estado);
+            assertThat(codeOf(() -> service.validateRuntimeWrite(accessOf(a)))).isEqualTo("SESION_FINALIZADA");
+            assertThat(codeOf(() -> service.validateRuntimeRead(accessOf(a)))).isEqualTo("SESION_FINALIZADA");
+        }
+    }
+
+    @Test
+    void lecturaConEnlaceVencidoYJwtVigenteNoLanzaTokenExpirado() {
+        AsignacionTest a = conEstado(EstadoSesionAplicacion.ABIERTA);
+        a.setTokenExpiraEn(LocalDateTime.ofInstant(CLOCK.instant().minusSeconds(1), ZoneOffset.UTC));
+        assertThat(service.validateRuntimeRead(accessOf(a)).assignmentId()).isEqualTo(77L);
+        assertThat(a.getEstado()).isEqualTo(EstadoAsignacion.ASIGNADO);
+    }
+
+    @Test
+    void asignacionAnuladaLanzaAsignacionNoOperable() {
+        AsignacionTest a = conEstado(EstadoSesionAplicacion.ABIERTA);
+        a.setEstado(EstadoAsignacion.ANULADO);
+        assertThat(codeOf(() -> service.validateRuntimeWrite(accessOf(a)))).isEqualTo("ASIGNACION_NO_OPERABLE");
+        assertThat(codeOf(() -> service.validateRuntimeRead(accessOf(a)))).isEqualTo("ASIGNACION_NO_OPERABLE");
+    }
+
+    @Test
+    void grantParticipantAccessAceptaSesionPausada() {
+        AsignacionTest a = conEstado(EstadoSesionAplicacion.PAUSADA);
+        when(tokens.matches("raw-token", "hashed-token")).thenReturn(true);
+        assertThat(service.grantParticipantAccess(77L, "raw-token").assignmentId()).isEqualTo(77L);
+    }
+
+    private static String codeOf(Runnable action) {
+        try {
+            action.run();
+        } catch (ParticipantConflictException e) {
+            return e.getCode();
+        }
+        return null;
     }
 
     private static AsignacionTest asignacionAbierta() {

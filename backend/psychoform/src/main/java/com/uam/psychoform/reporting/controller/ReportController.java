@@ -8,6 +8,10 @@ import com.uam.psychoform.dto.ApiResponse;
 import com.uam.psychoform.dto.EntityView;
 import com.uam.psychoform.security.SecurityPermissions;
 import jakarta.validation.Valid;
+import java.nio.charset.StandardCharsets;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +41,19 @@ public class ReportController {
     @PreAuthorize(SecurityPermissions.REPORTE_EXPORTAR)
     public ApiResponse<?> aggregate(@Valid @RequestBody ReportRequest request) {
         return ApiResponse.ok(EntityView.of(reports.registerAggregateReport(toCommand(request))));
+    }
+
+    @GetMapping("/{id}/file")
+    @PreAuthorize(SecurityPermissions.REPORTE_EXPORTAR)
+    public ResponseEntity<byte[]> file(@PathVariable Long id) {
+        ReportRegistryService.ReportFile file = reports.downloadReport(id);
+        ContentDisposition disposition = ContentDisposition.attachment()
+                .filename(file.fileName(), StandardCharsets.UTF_8)
+                .build();
+        return ResponseEntity.ok()
+                .contentType(file.contentType())
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition.toString())
+                .body(file.bytes());
     }
 
     private ReportRegistryService.RegisterReportCommand toCommand(ReportRequest request) {

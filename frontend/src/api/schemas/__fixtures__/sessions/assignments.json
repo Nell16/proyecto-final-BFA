@@ -1,0 +1,41 @@
+[
+  {
+    "assignmentId": 501,
+    "attemptId": null,
+    "participantId": "11111111-2222-3333-4444-555555555555",
+    "participantName": "Ana López",
+    "participantCode": "P-001",
+    "status": "GENERADO",
+    "state": "no-iniciado",
+    "currentSubtestId": "—",
+    "overallProgress": 0,
+    "lastActivity": "Nunca",
+    "tokenExpiraEn": "2026-11-24T22:00:00"
+  },
+  {
+    "assignmentId": 502,
+    "attemptId": 9001,
+    "participantId": "66666666-7777-8888-9999-000000000000",
+    "participantName": "Carlos Ruiz",
+    "participantCode": "P-002",
+    "status": "ACTIVO",
+    "state": "en-progreso",
+    "currentSubtestId": "SUB-01",
+    "overallProgress": 50,
+    "lastActivity": "2026-11-24T14:20:00",
+    "tokenExpiraEn": "2026-11-24T22:00:00"
+  },
+  {
+    "assignmentId": 503,
+    "attemptId": 9002,
+    "participantId": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+    "participantName": "María Pérez",
+    "participantCode": null,
+    "status": "VENCIDO",
+    "state": "completado",
+    "currentSubtestId": "SUB-02",
+    "overallProgress": 100,
+    "lastActivity": "2026-11-24T14:55:00",
+    "tokenExpiraEn": null
+  }
+]

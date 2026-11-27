@@ -1,0 +1,16 @@
+[
+  {
+    "id": 11,
+    "pausadoEn": "2026-11-24T14:10:00",
+    "reanudadoEn": "2026-11-24T14:15:00",
+    "pausadoPor": "550e8400-e29b-41d4-a716-446655440000",
+    "motivo": "Falla eléctrica breve"
+  },
+  {
+    "id": 12,
+    "pausadoEn": "2026-11-24T14:25:00",
+    "reanudadoEn": null,
+    "pausadoPor": "550e8400-e29b-41d4-a716-446655440000",
+    "motivo": null
+  }
+]

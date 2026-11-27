@@ -6,7 +6,7 @@ select has_table('public', 'usuario', 'La tabla usuario existe');
 select has_type('public', 'estado_general', 'El enum estado_general existe');
 select has_view('public', 'detalle_resultado', 'La vista detalle_resultado existe');
 select results_eq('select count(*)::integer from rol', array[4], 'Se cargan cuatro roles base');
-select results_eq('select count(*)::integer from permiso', array[43], 'Se cargan cuarenta y tres permisos RBAC base');
+select results_eq('select count(*)::integer from permiso', array[44], 'Se cargan cuarenta y cuatro permisos RBAC base');
 select results_eq(
     $$select count(*)::integer from permiso where codigo_permiso = 'CATALOGO_SEXO_LEER'$$,
     array[1],

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 10,
+    "codigo": "USUARIO_LEER",
+    "descripcion": "Permite listar usuarios"
+  },
+  {
+    "id": 11,
+    "codigo": "USUARIO_CREAR",
+    "descripcion": "Permite crear usuarios"
+  }
+]

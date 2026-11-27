@@ -32,10 +32,10 @@ class SecurityConfig {
                 .exceptionHandling(e -> e.authenticationEntryPoint(errors).accessDeniedHandler(errors))
                 .authorizeHttpRequests(a -> a
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/acceso-participante/validar").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwt, UsernamePasswordAuthenticationFilter.class)
                 .build();
@@ -47,7 +47,7 @@ class SecurityConfig {
         String origenes = System.getenv().getOrDefault("BFA_CORS_ORIGINS", "http://localhost:5173");
         configuration.setAllowedOrigins(Arrays.stream(origenes.split(",")).map(String::trim).filter(o -> !o.isEmpty()).toList());
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control", "Idempotency-Key"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

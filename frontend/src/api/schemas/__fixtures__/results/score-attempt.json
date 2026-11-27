@@ -1,0 +1,14 @@
+{
+  "id": 15,
+  "intentoId": 42,
+  "estrategiaCalificacionId": 1,
+  "calculadoEn": "2026-10-01T09:19:00",
+  "calculadoPorId": "11111111-1111-1111-1111-111111111111",
+  "puntajeTotalDirecto": 18.0,
+  "cantidadItems": 10,
+  "cantidadCorrectas": 9,
+  "cantidadIncorrectas": 1,
+  "cantidadPendientesRevision": 0,
+  "requiereRevisionManual": false,
+  "estado": "CALCULADO"
+}

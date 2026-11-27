@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "codigoCarrera": "PSI",
+    "nombreCarrera": "Psicología",
+    "estado": "ACTIVO"
+  },
+  {
+    "id": 2,
+    "codigoCarrera": "ING-SIS",
+    "nombreCarrera": "Ingeniería en Sistemas",
+    "estado": "ACTIVO"
+  }
+]

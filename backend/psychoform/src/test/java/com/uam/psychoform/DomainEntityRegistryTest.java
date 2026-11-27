@@ -40,9 +40,11 @@ class DomainEntityRegistryTest {
                 Map.entry("com.uam.psychoform.instrument.model.NivelCriterioRubrica", "nivel_criterio_rubrica"),
                 Map.entry("com.uam.psychoform.assessment.model.SesionAplicacion", "sesion_aplicacion"),
                 Map.entry("com.uam.psychoform.assessment.model.SesionSubtest", "sesion_subtest"),
+                Map.entry("com.uam.psychoform.assessment.model.PausaSesion", "pausa_sesion"),
                 Map.entry("com.uam.psychoform.assessment.model.AsignacionTest", "asignacion_test"),
                 Map.entry("com.uam.psychoform.assessment.model.IntentoTest", "intento_test"),
                 Map.entry("com.uam.psychoform.assessment.model.IntentoSubtest", "intento_subtest"),
+                Map.entry("com.uam.psychoform.assessment.model.RespuestaRechazada", "respuesta_rechazada"),
                 Map.entry("com.uam.psychoform.assessment.model.RespuestaItem", "respuesta_item"),
                 Map.entry("com.uam.psychoform.assessment.model.OpcionSeleccionadaRespuesta", "opcion_seleccionada_respuesta"),
                 Map.entry("com.uam.psychoform.scoring.model.Resultado", "resultado"),
@@ -64,7 +66,7 @@ class DomainEntityRegistryTest {
     void noEntityRemainsAnIdentifierOnlyScaffold() throws Exception {
         String[] classNames = {
                 "academic.model.CatalogoSexo", "academic.model.Carrera", "academic.model.Cohorte", "academic.model.GrupoAcademico", "academic.model.Participante",
-                "assessment.model.SesionAplicacion", "assessment.model.SesionSubtest", "assessment.model.AsignacionTest", "assessment.model.IntentoTest", "assessment.model.IntentoSubtest", "assessment.model.RespuestaItem", "assessment.model.OpcionSeleccionadaRespuesta",
+                "assessment.model.SesionAplicacion", "assessment.model.SesionSubtest", "assessment.model.PausaSesion", "assessment.model.AsignacionTest", "assessment.model.IntentoTest", "assessment.model.IntentoSubtest", "assessment.model.RespuestaRechazada", "assessment.model.RespuestaItem", "assessment.model.OpcionSeleccionadaRespuesta",
                 "audit.model.Auditoria", "instrument.model.Baremo", "instrument.model.ClaveRespuesta", "instrument.model.CriterioRubrica", "instrument.model.DimensionResultado", "instrument.model.EstrategiaCalificacion", "instrument.model.ImagenItem", "instrument.model.ImagenOpcion", "instrument.model.Item", "instrument.model.NivelCriterioRubrica", "instrument.model.OpcionItem", "instrument.model.OpcionPuntajeDimension", "instrument.model.RangoBaremo", "instrument.model.RecursoMultimedia", "instrument.model.ReglaCalificacion", "instrument.model.RubricaEvaluacion", "instrument.model.Subtest", "instrument.model.TestPsicologico", "instrument.model.VersionTest",
                 "reporting.model.ReporteGenerado", "scoring.model.CalificacionRespuesta", "scoring.model.Resultado", "scoring.model.ResultadoDimension", "scoring.model.RevisionManualRespuesta", "scoring.model.RevisionRubricaRespuesta"};
         for (String className : classNames) {

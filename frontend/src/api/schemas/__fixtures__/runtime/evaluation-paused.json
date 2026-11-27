@@ -1,0 +1,85 @@
+{
+  "success": true,
+  "data": {
+    "id": 101,
+    "assignmentId": 42,
+    "sessionId": 7,
+    "participantDisplayName": "Ana Pérez Gómez",
+    "sessionName": "Evaluación Cohorte 2026-1",
+    "sessionStatus": "PAUSADA",
+    "pausedAt": "2026-11-24T15:10:00-06:00",
+    "attemptStatus": "EN_PROGRESO",
+    "subtests": [
+      {
+        "subtestId": 10,
+        "code": "RAZ-VERB",
+        "name": "Razonamiento Verbal",
+        "instructions": "Lee cuidadosamente cada enunciado.",
+        "order": 1,
+        "timeLimitSeconds": 600,
+        "randomizeItems": false,
+        "randomizeOptions": false,
+        "status": "EN_PROGRESO",
+        "startedAt": "2026-11-24T15:05:00-06:00",
+        "remainingSeconds": 400,
+        "paused": true,
+        "serverNow": "2026-11-24T15:12:00-06:00",
+        "items": [
+          {
+            "itemId": 101,
+            "code": "RV-01",
+            "itemType": "RAZONAMIENTO_VERBAL",
+            "responseType": "OPCION_UNICA",
+            "prompt": "Libro es a lectura como tenedor es a:",
+            "instruction": "Elige una opción.",
+            "order": 1,
+            "timeLimitSeconds": null,
+            "required": true,
+            "images": [],
+            "options": [
+              {
+                "optionId": 901,
+                "code": "OP-A",
+                "text": "Alimentación",
+                "order": 1,
+                "ordinalValue": null,
+                "images": []
+              },
+              {
+                "optionId": 902,
+                "code": "OP-B",
+                "text": "Pintura",
+                "order": 2,
+                "ordinalValue": null,
+                "images": []
+              }
+            ],
+            "savedAnswer": {
+              "selectedOptionIds": [901],
+              "textAnswer": null,
+              "numericAnswer": null,
+              "timeUsedSeconds": 18
+            }
+          }
+        ]
+      },
+      {
+        "subtestId": 20,
+        "code": "MAT-NUM",
+        "name": "Razonamiento Numérico",
+        "instructions": null,
+        "order": 2,
+        "timeLimitSeconds": null,
+        "randomizeItems": false,
+        "randomizeOptions": false,
+        "status": "NO_INICIADO",
+        "startedAt": null,
+        "remainingSeconds": null,
+        "paused": false,
+        "serverNow": "2026-11-24T15:12:00-06:00",
+        "items": []
+      }
+    ]
+  },
+  "correlationId": "req-yo-paused"
+}

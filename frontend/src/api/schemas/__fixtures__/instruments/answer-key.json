@@ -1,0 +1,13 @@
+{
+  "id": 50,
+  "reglaCalificacionId": 80,
+  "itemId": 30,
+  "opcionCorrectaId": 40,
+  "textoEsperado": null,
+  "valorNumericoEsperado": null,
+  "toleranciaNumerica": null,
+  "puntaje": 1,
+  "requiereRevisionManual": false,
+  "creadoPorId": "44444444-4444-4444-4444-444444444444",
+  "creadoEn": "2026-06-26T10:35:00"
+}

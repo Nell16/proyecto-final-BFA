@@ -1,0 +1,36 @@
+/**
+ * Códigos de permiso reales del backend (psycho-form: SecurityPermissions.java y
+ * seed RBAC). /auth/me los devuelve sin el prefijo `PERM_`.
+ */
+export const PERMISSIONS = {
+  // Catálogos
+  CATALOGO_SEXO_LEER: "CATALOGO_SEXO_LEER",
+  CARRERA_LEER: "CARRERA_LEER",
+  COHORTE_LEER: "COHORTE_LEER",
+  GRUPO_ACADEMICO_LEER: "GRUPO_ACADEMICO_LEER",
+  // Participantes y sesiones
+  PARTICIPANTE_LEER: "PARTICIPANTE_LEER",
+  SESION_CREAR: "SESION_CREAR",
+  SESION_APLICAR: "SESION_APLICAR",
+  // Instrumentos
+  TEST_CREAR: "TEST_CREAR",
+  TEST_PUBLICAR: "TEST_PUBLICAR",
+  CALIFICACION_CONFIGURAR: "CALIFICACION_CONFIGURAR",
+  BAREMO_CONFIGURAR: "BAREMO_CONFIGURAR",
+  // Resultados y reportes
+  CALIFICACION_EJECUTAR: "CALIFICACION_EJECUTAR",
+  RESULTADO_VER: "RESULTADO_VER",
+  RESULTADO_AGREGADO_VER: "RESULTADO_AGREGADO_VER",
+  REPORTE_EXPORTAR: "REPORTE_EXPORTAR",
+  // Administración
+  USUARIO_LEER: "USUARIO_LEER",
+  ROL_LEER: "ROL_LEER",
+  AUDITORIA_VER: "AUDITORIA_VER",
+} as const;
+
+export type PermissionCode = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
+
+/** Equivalente al `TEST_LEER` del backend: TEST_CREAR o TEST_PUBLICAR. */
+export const TEST_LEER: readonly PermissionCode[] = [PERMISSIONS.TEST_CREAR, PERMISSIONS.TEST_PUBLICAR];
+/** `SESION_LEER` del backend: SESION_APLICAR o SESION_CREAR. */
+export const SESION_LEER: readonly PermissionCode[] = [PERMISSIONS.SESION_APLICAR, PERMISSIONS.SESION_CREAR];

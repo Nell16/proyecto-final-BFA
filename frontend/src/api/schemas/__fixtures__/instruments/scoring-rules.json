@@ -1,0 +1,19 @@
+[
+  {
+    "id": 80,
+    "versionTestId": 10,
+    "subtestId": 20,
+    "item": null,
+    "estrategiaCalificacionId": 1,
+    "tipoRegla": "CLAVE_ITEM",
+    "prioridad": 1,
+    "activa": true,
+    "estado": "BORRADOR",
+    "parametros": "{}",
+    "observacion": "Regla principal",
+    "creadoPorId": "44444444-4444-4444-4444-444444444444",
+    "creadoEn": "2026-06-26T10:30:00",
+    "aprobadoPor": null,
+    "aprobadoEn": null
+  }
+]

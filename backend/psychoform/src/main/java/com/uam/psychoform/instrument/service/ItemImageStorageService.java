@@ -32,10 +32,12 @@ public class ItemImageStorageService {
     private final AuditLogService audit;
     private final Clock clock;
     private final ObjectStorageService storage;
+    private final ImageResourceReleaser releaser;
 
     public ItemImageStorageService(ItemLookupRepository items, RecursoMultimediaRepository recursos,
             ImagenItemRepository imagenes, UsuarioRepository usuarios, CurrentActor currentActor,
-            AuditLogService audit, Clock clock, ObjectStorageService storage) {
+            AuditLogService audit, Clock clock, ObjectStorageService storage,
+            ImageResourceReleaser releaser) {
         this.items = items;
         this.recursos = recursos;
         this.imagenes = imagenes;
@@ -44,6 +46,7 @@ public class ItemImageStorageService {
         this.audit = audit;
         this.clock = clock;
         this.storage = storage;
+        this.releaser = releaser;
     }
 
     @PreAuthorize(SecurityPermissions.TEST_LEER)
@@ -134,9 +137,10 @@ public class ItemImageStorageService {
                 .orElseThrow(() -> new EntityNotFoundException("Imagen no encontrada: " + imageId));
         Long itemId = image.getItem().getId();
         RecursoMultimedia resource = image.getRecurso();
-        storage.deleteObject(resource.getRutaAlmacenamiento());
+        // Solo se elimina el vinculo: el recurso puede seguir en uso por una version clonada (B9). El recurso y su
+        // objeto se borran (tras el commit) unicamente si no queda ninguna referencia.
         imagenes.delete(image);
-        recursos.delete(resource);
+        releaser.releaseIfUnreferenced(resource);
         audit.recordTrusted(new AuditLogService.AuditEvent("IMAGEN_ITEM_ELIMINADA", "item", String.valueOf(itemId),
                 "{\"imagenId\":" + imageId + "}", null, null, null));
     }
@@ -150,7 +154,8 @@ public class ItemImageStorageService {
         return new ImageView(image.getId(), resource.getId(), test.getId(), version.getId(), subtest.getId(),
                 item.getId(), item.getNumeroOrden(), image.getRolImagen(), image.getNumeroOrden(),
                 image.getTextoAlternativo(), resource.getNombreArchivo(),
-                resource.getTipoMime(), resource.getTamanoBytes(), "/items/images/resources/" + resource.getId());
+                resource.getTipoMime(), resource.getTamanoBytes(), "/items/images/resources/" + resource.getId(),
+                resource.getHashIntegridad(), ImageUploadKeys.clientKey(resource.getClaveSubida()));
     }
 
     private static String objectPath(Item item, String safeName) {
@@ -196,7 +201,13 @@ public class ItemImageStorageService {
 
     public record ImageView(Long id, Long resourceId, Long testId, Long versionId, Long subtestId, Long itemId,
             Integer itemOrder, String role, Integer order, String altText, String fileName, String mimeType,
-            Long sizeBytes, String url) {
+            Long sizeBytes, String url, String sha256, String uploadKey) {
+        public ImageView(Long id, Long resourceId, Long testId, Long versionId, Long subtestId, Long itemId,
+                Integer itemOrder, String role, Integer order, String altText, String fileName, String mimeType,
+                Long sizeBytes, String url) {
+            this(id, resourceId, testId, versionId, subtestId, itemId, itemOrder, role, order, altText, fileName,
+                    mimeType, sizeBytes, url, null, null);
+        }
     }
 
     public record StoredFile(String fileName, String mimeType, byte[] bytes) {

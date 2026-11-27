@@ -1,11 +1,12 @@
 import { createRoot } from "react-dom/client";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
+import { setNavigator } from './api/client';
+import { queryClient } from './api/queryClient';
 import "./styles/index.css";
 
-// Crear un cliente para TanStack Query
-const queryClient = new QueryClient();
+// El QueryClient es un singleton (api/queryClient): la capa de sesión lo vacía al cambiar de cuenta.
 
 // Crear una instancia de router
 const router = createRouter({
@@ -14,6 +15,12 @@ const router = createRouter({
     queryClient,
   },
 });
+
+// Los interceptores de axios navegan con el router (no con window.location).
+setNavigator(
+  (options) => router.navigate(options as Parameters<typeof router.navigate>[0]),
+  () => router.state.location.href,
+);
 
 // Registrar el tipo del router para Type Safety
 declare module '@tanstack/react-router' {

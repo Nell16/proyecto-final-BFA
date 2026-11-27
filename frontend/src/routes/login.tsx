@@ -1,21 +1,26 @@
-import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Brand } from "../app/components/brand";
+import { useRef, useState } from "react";
+import { createFileRoute, redirect, useNavigate, useRouter } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
+import { Brand, APP_NAME } from "../app/components/brand";
 import { Button } from "../app/components/ui/button";
 import { Input } from "../app/components/ui/input";
 import { Label } from "../app/components/ui/label";
 import { Card, CardContent } from "../app/components/ui/card";
 import { Alert, AlertDescription } from "../app/components/ui/alert";
 import { AlertCircle, Lock, ShieldCheck, Loader2 } from "lucide-react";
-import { authService } from "../api/authService";
-import { useAuthStore } from "../store/authStore";
+import { authKeys, authService, LOGIN_SUPERSEDED } from "../api/authService";
+import { toApiError } from "../api/errors";
+import { useStaffAuth } from "../store/staffAuth";
+import { resolveSafeRedirect } from "../store/safeRedirect";
 
 export const Route = createFileRoute("/login")({
   component: LoginRoute,
-  beforeLoad: ({ navigate }) => {
-    const isAuthenticated = useAuthStore.getState().isAuthenticated();
-    if (isAuthenticated) {
-      throw navigate({ to: "/app/dashboard" });
+  validateSearch: (search: Record<string, unknown>): { redirect?: string } => ({
+    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+  }),
+  beforeLoad: () => {
+    if (useStaffAuth.getState().token) {
+      throw redirect({ to: "/app/dashboard" });
     }
   }
 });
@@ -29,13 +34,17 @@ const DEMO_ROLES = [
 
 function LoginRoute() {
   const navigate = useNavigate();
-  const setToken = useAuthStore((s) => s.setToken);
-  const setUser = useAuthStore((s) => s.setUser);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { redirect: redirectTo } = Route.useSearch();
 
   const [user, setUserInput] = useState("");
   const [pass, setPass] = useState("");
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
+  // Identifica el último envío del formulario: un envío anterior que termina tarde no debe
+  // pintar errores, apagar el loading del nuevo ni navegar.
+  const submitCounter = useRef(0);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,18 +53,27 @@ function LoginRoute() {
       return;
     }
 
+    const submitId = (submitCounter.current += 1);
+    const isLatestSubmit = (): boolean => submitCounter.current === submitId;
     setLoading(true);
     setErr("");
 
     try {
+      // authService.login deja token, expiresAt y usuario en staffAuth (si sigue vigente).
       const result = await authService.login(user, pass);
-      setToken(result.token);
-      setUser(result.user);
-      navigate({ to: "/app/dashboard" });
-    } catch (error: any) {
-      setErr(error.message || "Error al iniciar sesión.");
+      // Solo si ESTE login sigue siendo la sesión activa: si no, no se siembra ni se navega.
+      const current = useStaffAuth.getState();
+      if (!isLatestSubmit() || current.token !== result.token) return;
+      // Sustituye cualquier /auth/me en caché de otro usuario.
+      queryClient.setQueryData(authKeys.me(current.sessionId), result.user);
+      router.history.replace(resolveSafeRedirect(redirectTo));
+    } catch (error: unknown) {
+      const apiError = toApiError(error);
+      // Un login reemplazado por otro más reciente se descarta en silencio.
+      if (apiError.code === LOGIN_SUPERSEDED || !isLatestSubmit()) return;
+      setErr(apiError.message || "Error al iniciar sesión.");
     } finally {
-      setLoading(false);
+      if (isLatestSubmit()) setLoading(false);
     }
   };
 
@@ -66,32 +84,37 @@ function LoginRoute() {
   };
 
   return (
-    <div className="min-h-screen w-full grid lg:grid-cols-2 bg-muted/30">
-      <div className="hidden lg:flex flex-col justify-between bg-primary text-primary-foreground p-10 relative overflow-hidden">
-        <Brand light />
+    <div className="min-h-screen w-full grid lg:grid-cols-2 bg-background">
+      <div className="hidden lg:flex flex-col justify-between bg-sidebar text-sidebar-foreground p-10 relative overflow-hidden">
+        <div className="relative z-10">
+          <Brand light />
+        </div>
         <div className="relative z-10 max-w-md">
           <h2 className="text-3xl font-semibold leading-tight">
-            Plataforma de digitalización de la Batería de Funciones Atencionales
+            Sistema Integrado de Aplicación de Tests
           </h2>
-          <p className="mt-4 text-white/80">
-            Aplicación supervisada de los subtests Figuras idénticas, Desplazamiento y Espacial. Resguardo de claves, ítems e imágenes bajo estándares de confidencialidad académica.
+          <div className="mt-4 h-1 w-24 rounded-full bg-white/70" aria-hidden="true" />
+          <p className="mt-4 text-white">
+            Diseño de instrumentos, aplicación supervisada de pruebas psicométricas, calificación y reportes en un solo lugar. Resguardo de claves, ítems e imágenes bajo estándares de confidencialidad académica.
           </p>
-          <div className="mt-8 flex items-center gap-2 text-sm text-white/70">
+          <div className="mt-8 flex items-center gap-2 text-sm text-white">
             <ShieldCheck className="h-4 w-4" /> Acceso restringido a personal autorizado UAM.
           </div>
         </div>
-        <div className="text-xs text-white/50">© Universidad Americana · BFA Digital</div>
-        <div className="absolute -right-32 -bottom-32 h-96 w-96 rounded-full bg-white/5" />
-        <div className="absolute -right-10 top-20 h-40 w-40 rounded-full bg-destructive/30" />
+        <div className="relative z-10 text-xs text-white">© Universidad Americana · {APP_NAME}</div>
+        {/* Formas decorativas en el teal de la marca */}
+        <div className="absolute -right-32 -bottom-32 h-96 w-96 rounded-full bg-brand/60" aria-hidden="true" />
+        <div className="absolute -right-10 top-20 h-40 w-40 rounded-full border-[14px] border-white/10" aria-hidden="true" />
+        <div className="absolute -left-24 -top-24 h-64 w-64 rounded-full bg-brand-deep/40" aria-hidden="true" />
       </div>
 
       <div className="flex items-center justify-center p-6">
-        <Card className="w-full max-w-md border-0 shadow-lg bg-white">
+        <Card className="w-full max-w-md border-0 border-t-4 border-t-brand shadow-lg bg-card">
           <CardContent className="p-8">
             <div className="lg:hidden mb-6">
               <Brand />
             </div>
-            <h1 className="text-2xl font-semibold text-primary">Iniciar sesión</h1>
+            <h1 className="text-2xl font-semibold text-brand-deep dark:text-primary">Iniciar sesión</h1>
             <p className="text-sm text-muted-foreground mt-1">
               Ingrese sus credenciales institucionales.
             </p>

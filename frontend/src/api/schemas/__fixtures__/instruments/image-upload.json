@@ -1,0 +1,12 @@
+{
+  "imageLinkId": 55,
+  "resourceId": 77,
+  "storagePath": "test-config/items/30/file.png",
+  "filename": "file.png",
+  "mimeType": "image/png",
+  "sizeBytes": 1024,
+  "hash": "abc123def456",
+  "order": 1,
+  "altText": "Figura",
+  "role": "ENUNCIADO"
+}

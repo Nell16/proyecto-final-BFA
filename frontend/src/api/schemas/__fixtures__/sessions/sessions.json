@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "versionTestId": 10,
+    "codigoSesion": "SES-2026-01",
+    "nombreSesion": "Evaluación Ingreso 2026",
+    "descripcion": "Aplicación matutina grupo A",
+    "inicioProgramado": "2026-11-24T09:00:00",
+    "finProgramado": "2026-11-24T12:00:00",
+    "inicioReal": null,
+    "finReal": null,
+    "ubicacion": "Laboratorio 2",
+    "estado": "PROGRAMADA",
+    "creadoPorId": "550e8400-e29b-41d4-a716-446655440000",
+    "creadoEn": "2026-11-20T14:30:00",
+    "pausadoEn": null
+  },
+  {
+    "id": 2,
+    "versionTestId": 10,
+    "codigoSesion": "SES-2026-02",
+    "nombreSesion": "Evaluación Vespertina",
+    "descripcion": null,
+    "inicioProgramado": "2026-11-24T14:00:00",
+    "finProgramado": null,
+    "inicioReal": "2026-11-24T14:02:00",
+    "finReal": null,
+    "ubicacion": null,
+    "estado": "PAUSADA",
+    "creadoPorId": "550e8400-e29b-41d4-a716-446655440000",
+    "creadoEn": "2026-11-20T15:00:00",
+    "pausadoEn": "2026-11-24T14:25:00"
+  }
+]

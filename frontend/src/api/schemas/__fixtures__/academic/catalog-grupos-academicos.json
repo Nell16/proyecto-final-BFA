@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "carreraId": 1,
+    "codigoGrupo": "PSI-A",
+    "nombreGrupo": "Grupo A",
+    "estado": "ACTIVO"
+  },
+  {
+    "id": 2,
+    "carrera": null,
+    "codigoGrupo": "GEN-B",
+    "nombreGrupo": null,
+    "estado": "ACTIVO"
+  }
+]

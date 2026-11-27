@@ -5,17 +5,28 @@ interface LoadingStateProps {
   fullscreen?: boolean;
 }
 
-export function LoadingState({ message = "Cargando...", fullscreen = false }: LoadingStateProps) {
+export function LoadingState({
+  message = "Cargando...",
+  fullscreen = false,
+}: LoadingStateProps) {
   const content = (
-    <div className="flex flex-col items-center justify-center p-8 space-y-4 text-center">
-      <Loader2 className="h-10 w-10 animate-spin text-primary" />
-      <p className="text-sm font-medium text-muted-foreground animate-pulse">{message}</p>
+    <div
+      data-slot="loading-state"
+      role="status"
+      aria-live="polite"
+      className="flex flex-col items-center justify-center gap-3 p-8 text-center"
+    >
+      <Loader2
+        aria-hidden="true"
+        className="size-8 animate-spin text-primary"
+      />
+      <p className="text-sm font-medium text-muted-foreground">{message}</p>
     </div>
   );
 
   if (fullscreen) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-50">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/85 backdrop-blur-sm">
         {content}
       </div>
     );

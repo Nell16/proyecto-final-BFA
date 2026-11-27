@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -28,6 +29,7 @@ class ParticipantPaginationWebTest {
     private MockMvc mvc;
 
     @BeforeEach
+    @SuppressWarnings("unchecked")
     void setUp() {
         repository = mock(ParticipanteRepository.class);
         var service = new ParticipanteService(repository, mock(CatalogoSexoRepository.class),
@@ -36,8 +38,8 @@ class ParticipantPaginationWebTest {
         mvc = MockMvcBuilders.standaloneSetup(new ParticipantController(service))
                 .setControllerAdvice(new GlobalExceptionHandler()).build();
         List<Participante> rows = List.of(participant(1), participant(2), participant(3));
-        when(repository.findAll(any(Pageable.class))).thenAnswer(invocation -> {
-            Pageable pageable = invocation.getArgument(0);
+        when(repository.findAll(any(Specification.class), any(Pageable.class))).thenAnswer(invocation -> {
+            Pageable pageable = invocation.getArgument(1);
             int start = (int) Math.min(pageable.getOffset(), rows.size());
             int end = Math.min(start + pageable.getPageSize(), rows.size());
             return new PageImpl<>(rows.subList(start, end), pageable, rows.size());
@@ -45,7 +47,9 @@ class ParticipantPaginationWebTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void returnsDifferentPagesAndMetadata() throws Exception {
+        Sort defaultSort = Sort.by(Sort.Order.asc("apellidos"), Sort.Order.asc("id"));
         mvc.perform(get("/participantes").param("page", "0").param("size", "2"))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.content.length()").value(2))
@@ -65,8 +69,8 @@ class ParticipantPaginationWebTest {
                 .andExpect(jsonPath("$.data.numberOfElements").value(1))
                 .andExpect(jsonPath("$.data.first").value(false))
                 .andExpect(jsonPath("$.data.last").value(true));
-        verify(repository).findAll(PageRequest.of(0, 2, Sort.by("codigoParticipante", "id")));
-        verify(repository).findAll(PageRequest.of(1, 2, Sort.by("codigoParticipante", "id")));
+        verify(repository).findAll(any(Specification.class), eq(PageRequest.of(0, 2, defaultSort)));
+        verify(repository).findAll(any(Specification.class), eq(PageRequest.of(1, 2, defaultSort)));
         verify(repository, never()).findAll();
     }
 
@@ -81,12 +85,24 @@ class ParticipantPaginationWebTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void usesDefaultPageAndSize() throws Exception {
+        Sort defaultSort = Sort.by(Sort.Order.asc("apellidos"), Sort.Order.asc("id"));
         mvc.perform(get("/participantes"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.number").value(0))
                 .andExpect(jsonPath("$.data.size").value(20));
-        verify(repository).findAll(PageRequest.of(0, 20, Sort.by("codigoParticipante", "id")));
+        verify(repository).findAll(any(Specification.class), eq(PageRequest.of(0, 20, defaultSort)));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void clampsSizeAbove100To100() throws Exception {
+        Sort defaultSort = Sort.by(Sort.Order.asc("apellidos"), Sort.Order.asc("id"));
+        mvc.perform(get("/participantes").param("size", "500"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.size").value(100));
+        verify(repository).findAll(any(Specification.class), eq(PageRequest.of(0, 100, defaultSort)));
     }
 
     @Test
@@ -99,12 +115,26 @@ class ParticipantPaginationWebTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"-1,2", "0,0", "0,-1", "0,101"})
+    @CsvSource({"-1,2", "0,0", "0,-1"})
     void rejectsInvalidPaginationWithoutQueryingRepository(int page, int size) throws Exception {
         mvc.perform(get("/participantes").param("page", String.valueOf(page))
                 .param("size", String.valueOf(size)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"));
+        verifyNoInteractions(repository);
+    }
+
+    @Test
+    void rejectsInvalidSortOrEstadoWithoutQueryingRepository() throws Exception {
+        mvc.perform(get("/participantes").param("sort", "inexistente,asc"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"));
+        mvc.perform(get("/participantes").param("sort", "apellidos,lateral"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"));
+        mvc.perform(get("/participantes").param("estado", "NO_EXISTE"))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"));
         verifyNoInteractions(repository);
     }

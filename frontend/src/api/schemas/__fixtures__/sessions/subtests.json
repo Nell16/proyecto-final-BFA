@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1001,
+    "sesionAplicacionId": 1,
+    "versionTestId": 10,
+    "subtestId": 201,
+    "numeroOrden": 1,
+    "tiempoLimiteSegundos": 600,
+    "permiteAleatorizarItems": true,
+    "permiteAleatorizarOpciones": false
+  },
+  {
+    "id": 1002,
+    "sesionAplicacionId": 1,
+    "versionTestId": 10,
+    "subtestId": 202,
+    "numeroOrden": 2,
+    "tiempoLimiteSegundos": null,
+    "permiteAleatorizarItems": false,
+    "permiteAleatorizarOpciones": true
+  }
+]

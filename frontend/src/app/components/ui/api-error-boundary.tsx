@@ -1,5 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from "react";
 import { AlertTriangle, RotateCcw, Home } from "lucide-react";
+import { safeErrorLog } from "../../../api/errors";
 import { Button } from "./button";
 
 interface Props {
@@ -23,7 +24,8 @@ export class ApiErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Uncaught error in ApiErrorBoundary:", error, errorInfo);
+    // Solo campos seguros: un error con `config` de axios llevaría el JWT a la consola.
+    console.error("Uncaught error in ApiErrorBoundary:", safeErrorLog(error), errorInfo.componentStack);
   }
 
   private handleReset = () => {
@@ -69,8 +71,8 @@ interface ApiErrorPanelProps {
 }
 
 export function ApiErrorPanel({ error, resetErrorBoundary }: ApiErrorPanelProps) {
-  const status = error?.response?.status || error?.status;
-  const message = error?.response?.data?.message || error?.message || "Error desconocido";
+  const status = error?.status;
+  const message = error?.message || "Error desconocido";
 
   let title = "Error de Conexión";
   let description = "No pudimos comunicarnos con el servidor. Por favor, verifica tu conexión a internet.";

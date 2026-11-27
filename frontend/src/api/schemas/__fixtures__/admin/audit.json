@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1001,
+    "usuario": {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "nombreUsuario": "admin",
+      "nombreCompleto": "Administrador Principal"
+    },
+    "accion": "REVISION_MANUAL_GUARDADA",
+    "entidad": "revision_manual_respuesta",
+    "entidadId": "7",
+    "valorAnterior": null,
+    "valorNuevo": "{\"score\":2,\"approved\":true}",
+    "direccionIp": "127.0.0.1",
+    "agenteUsuario": "Mozilla/5.0",
+    "creadoEn": "2026-10-01T10:00:00"
+  },
+  {
+    "id": 1002,
+    "usuario": null,
+    "accion": "RESPALDO_GENERADO",
+    "entidad": "respaldo_exportacion",
+    "entidadId": "bfa-backup-20261001100500.json",
+    "valorAnterior": null,
+    "valorNuevo": "{\"fileName\":\"bfa-backup-20261001100500.json\",\"sizeBytes\":2048}",
+    "direccionIp": null,
+    "agenteUsuario": null,
+    "creadoEn": "2026-10-01T10:05:00"
+  }
+]

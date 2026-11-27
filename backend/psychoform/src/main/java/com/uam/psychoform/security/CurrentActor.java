@@ -22,4 +22,14 @@ public class CurrentActor {
         throw new org.springframework.security.authentication.AuthenticationCredentialsNotFoundException(
                 "No hay actor autenticado");
     }
+
+    /** True si el actor actual puede leer instrumentos completos (TEST_LEER); si no, solo ve el catalogo publicado. */
+    public boolean canReadFullInstruments() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+        return authentication.getAuthorities().stream()
+                .anyMatch(a -> SecurityPermissions.TEST_LEER_AUTHORITIES.contains(a.getAuthority()));
+    }
 }

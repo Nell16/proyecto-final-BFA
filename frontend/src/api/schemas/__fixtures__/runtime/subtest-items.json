@@ -1,0 +1,53 @@
+{
+  "success": true,
+  "data": {
+    "subtestId": 10,
+    "code": "RAZ-VERB",
+    "name": "Razonamiento Verbal",
+    "instructions": "Lee con atención.",
+    "order": 1,
+    "timeLimitSeconds": 600,
+    "randomizeItems": false,
+    "randomizeOptions": false,
+    "status": "EN_PROGRESO",
+    "startedAt": "2026-11-24T15:05:00-06:00",
+    "remainingSeconds": 510,
+    "paused": false,
+    "serverNow": "2026-11-24T15:06:30-06:00",
+    "items": [
+      {
+        "itemId": 101,
+        "code": "RV-01",
+        "itemType": "SOLO_TEXTO",
+        "responseType": "VERDADERO_FALSO",
+        "prompt": "Todos los mamíferos son vertebrados.",
+        "instruction": null,
+        "order": 1,
+        "timeLimitSeconds": null,
+        "required": true,
+        "images": [],
+        "options": [
+          {
+            "optionId": 802,
+            "code": "F",
+            "label": "F",
+            "text": "Falso",
+            "order": 2,
+            "ordinalValue": null,
+            "images": []
+          },
+          {
+            "optionId": 801,
+            "code": "V",
+            "label": "V",
+            "text": "Verdadero",
+            "order": 1,
+            "ordinalValue": null,
+            "images": []
+          }
+        ]
+      }
+    ]
+  },
+  "correlationId": "req-items-001"
+}

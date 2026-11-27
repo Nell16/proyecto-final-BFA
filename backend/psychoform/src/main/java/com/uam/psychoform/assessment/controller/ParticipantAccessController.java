@@ -22,7 +22,8 @@ public class ParticipantAccessController {
     @PostMapping("/validar")
     public ApiResponse<ParticipantAccessResponse> validate(@Valid @RequestBody ParticipantAccessRequest request) {
         var granted = access.grantParticipantAccess(request.assignmentId(), request.token());
-        String token = participantJwt.issue(granted.participantId(), granted.assignmentId());
+        String token = participantJwt.issue(granted.participantId(), granted.assignmentId(),
+                granted.tokenExpiresAt());
         return ApiResponse.ok(new ParticipantAccessResponse(granted.assignmentId(), granted.participantId(), token,
                 "Bearer"));
     }

@@ -1,9 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useAuthStore } from "../store/authStore";
+import { useStaffAuth } from "../store/staffAuth";
 
 export const Route = createFileRoute("/")({
   beforeLoad: () => {
-    const isAuthenticated = useAuthStore.getState().isAuthenticated();
+    const isAuthenticated = useStaffAuth.getState().token !== null;
     if (isAuthenticated) {
       throw redirect({ to: "/app/dashboard" });
     } else {

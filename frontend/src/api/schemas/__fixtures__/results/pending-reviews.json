@@ -1,0 +1,19 @@
+[
+  {
+    "reviewId": 7,
+    "answerId": 9002,
+    "attemptId": 42,
+    "participantId": "22222222-2222-2222-2222-222222222222",
+    "participantName": "María López",
+    "itemId": 102,
+    "itemCode": "IT-02",
+    "prompt": "Describa brevemente su respuesta.",
+    "textAnswer": "Me siento tranquilo en general.",
+    "numericAnswer": null,
+    "status": "PENDIENTE",
+    "score": null,
+    "comment": null,
+    "createdAt": "2026-10-01T09:20:00",
+    "reviewedAt": null
+  }
+]

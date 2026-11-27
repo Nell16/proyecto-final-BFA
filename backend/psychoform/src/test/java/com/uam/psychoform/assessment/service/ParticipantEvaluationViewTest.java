@@ -38,8 +38,13 @@ class ParticipantEvaluationViewTest {
     private final OpcionItemLookupRepository opciones = Mockito.mock(OpcionItemLookupRepository.class);
     private final ImagenItemRepository imagenesItem = Mockito.mock(ImagenItemRepository.class);
     private final ImagenOpcionRepository imagenesOpcion = Mockito.mock(ImagenOpcionRepository.class);
+    private static final java.time.Clock CLOCK = java.time.Clock.fixed(java.time.Instant.parse("2026-06-24T12:00:00Z"),
+            java.time.ZoneOffset.UTC);
+    private final com.uam.psychoform.assessment.repository.PausaSesionRepository pausas =
+            Mockito.mock(com.uam.psychoform.assessment.repository.PausaSesionRepository.class);
     private final ParticipantEvaluationView view = new ParticipantEvaluationView(asignaciones, intentos,
-            intentoSubtests, sesionSubtests, items, opciones, imagenesItem, imagenesOpcion);
+            intentoSubtests, sesionSubtests, items, opciones, imagenesItem, imagenesOpcion,
+            new SubtestTimingService(intentoSubtests, pausas, CLOCK));
 
     @Test
     void evaluationPayloadIncluyeIntentoMetadatosYEstadoRealDeSubtests() {
@@ -72,9 +77,83 @@ class ParticipantEvaluationViewTest {
         assertThat(payload.sessionName()).isEqualTo("Sesion UAM");
         assertThat(payload.sessionStatus()).isEqualTo("ABIERTA");
         assertThat(payload.attemptStatus()).isEqualTo("EN_PROGRESO");
+        assertThat(payload.finishedAt()).isNull();
         assertThat(payload.subtests()).extracting(ParticipantEvaluationView.SubtestPayload::status)
                 .containsExactly("COMPLETADO", "NO_INICIADO");
         verify(items).findBySubtestIdInAndEstadoOrderBySubtestAndItemOrder(List.of(10L, 20L), EstadoGeneral.ACTIVO);
+    }
+
+    @Test
+    void payloadConSesionPausadaExponePausaYTiempoCongelado() {
+        AsignacionTest asignacion = asignacion();
+        asignacion.getSesionAplicacion().setEstado(EstadoSesionAplicacion.PAUSADA);
+        IntentoTest intento = new IntentoTest();
+        intento.setId(77L);
+        intento.setEstado(EstadoIntento.EN_PROGRESO);
+        Subtest memoria = subtest(10L, "MEM", "Memoria");
+        SesionSubtest sesionMemoria = sesionSubtest(memoria, 1);
+        sesionMemoria.setTiempoLimiteSegundos(600);
+        java.time.LocalDateTime t0 = java.time.LocalDateTime.now(CLOCK).minusSeconds(500);
+        IntentoSubtest enCurso = new IntentoSubtest();
+        enCurso.setSubtest(memoria);
+        enCurso.setSesionSubtest(sesionMemoria);
+        enCurso.setEstado(EstadoIntento.EN_PROGRESO);
+        enCurso.setIniciadoEn(t0);
+        com.uam.psychoform.assessment.model.PausaSesion pausa = new com.uam.psychoform.assessment.model.PausaSesion();
+        pausa.setPausadoEn(t0.plusSeconds(100));
+        when(pausas.findBySesionAplicacionIdOrderByPausadoEnAsc(30L)).thenReturn(List.of(pausa));
+        when(asignaciones.findByIdWithSessionAndParticipant(50L)).thenReturn(Optional.of(asignacion));
+        when(intentos.findByAsignacionId(50L)).thenReturn(Optional.of(intento));
+        when(intentoSubtests.findByIntentoIdWithSubtest(77L)).thenReturn(List.of(enCurso));
+        when(sesionSubtests.findBySesionAplicacionIdWithSubtestOrderByNumeroOrdenAsc(30L))
+                .thenReturn(List.of(sesionMemoria));
+
+        ParticipantEvaluationView.EvaluationPayload payload = view.getEvaluationPayload(50L);
+
+        assertThat(payload.sessionStatus()).isEqualTo("PAUSADA");
+        assertThat(payload.subtests()).singleElement().satisfies(subtest -> {
+            assertThat(subtest.paused()).isTrue();
+            assertThat(subtest.remainingSeconds()).isEqualTo(500);
+            assertThat(subtest.startedAt()).isNotNull();
+            assertThat(subtest.serverNow()).isNotNull();
+            assertThat(subtest.timeLimitSeconds()).isEqualTo(600);
+        });
+        Mockito.verify(pausas).findBySesionAplicacionIdOrderByPausadoEnAsc(30L);
+    }
+
+    @Test
+    void asignacionCompletadaExponeEstadoFinalSinItemsNiConsultarlos() {
+        AsignacionTest asignacion = asignacion();
+        asignacion.setEstado(EstadoAsignacion.COMPLETADO);
+        asignacion.getSesionAplicacion().setEstado(EstadoSesionAplicacion.CERRADA);
+        IntentoTest intento = new IntentoTest();
+        intento.setId(77L);
+        intento.setEstado(EstadoIntento.COMPLETADO);
+        intento.setFinalizadoEn(java.time.LocalDateTime.now(CLOCK).minusMinutes(2));
+        Subtest memoria = subtest(10L, "MEM", "Memoria");
+        SesionSubtest sesionMemoria = sesionSubtest(memoria, 1);
+        IntentoSubtest intentoMemoria = new IntentoSubtest();
+        intentoMemoria.setSubtest(memoria);
+        intentoMemoria.setSesionSubtest(sesionMemoria);
+        intentoMemoria.setEstado(EstadoIntento.COMPLETADO);
+        intentoMemoria.setIniciadoEn(java.time.LocalDateTime.now(CLOCK).minusMinutes(5));
+        when(asignaciones.findByIdWithSessionAndParticipant(50L)).thenReturn(Optional.of(asignacion));
+        when(intentos.findByAsignacionId(50L)).thenReturn(Optional.of(intento));
+        when(intentoSubtests.findByIntentoIdWithSubtest(77L)).thenReturn(List.of(intentoMemoria));
+        when(sesionSubtests.findBySesionAplicacionIdWithSubtestOrderByNumeroOrdenAsc(30L))
+                .thenReturn(List.of(sesionMemoria));
+
+        ParticipantEvaluationView.EvaluationPayload payload = view.getEvaluationPayload(50L);
+
+        assertThat(payload.attemptStatus()).isEqualTo("COMPLETADO");
+        assertThat(payload.sessionStatus()).isEqualTo("CERRADA");
+        assertThat(payload.finishedAt()).isEqualTo(java.time.OffsetDateTime.parse("2026-06-24T11:58:00Z"));
+        assertThat(payload.subtests()).singleElement().satisfies(subtest -> {
+            assertThat(subtest.status()).isEqualTo("COMPLETADO");
+            assertThat(subtest.startedAt()).isNotNull();
+            assertThat(subtest.items()).isEmpty();
+        });
+        Mockito.verifyNoInteractions(items, opciones, imagenesItem, imagenesOpcion);
     }
 
     private static AsignacionTest asignacion() {
