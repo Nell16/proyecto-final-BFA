@@ -6,13 +6,13 @@ DELETE FROM sesion_aplicacion WHERE sesion_aplicacion_id IN (101,102);
 DELETE FROM participante WHERE codigo_participante = 'ASP-2026-001';
 
 INSERT INTO participante (participante_id, codigo_participante, nombres, apellidos, fecha_nacimiento,
-                          sexo_id, carrera_id, cohorte_id, grupo_academico_id, correo, estado, creado_en)
+                          sexo_id, carrera_id, cohorte_id, grupo_academico_id, estado, creado_en)
 SELECT 'c0000000-0000-4000-8000-000000000001'::uuid, 'ASP-2026-001', 'Ana Lucia', 'Mendoza Rivas', DATE '2006-03-18',
        (SELECT sexo_id FROM catalogo_sexo ORDER BY sexo_id LIMIT 1),
        (SELECT carrera_id FROM carrera ORDER BY carrera_id LIMIT 1),
        (SELECT cohorte_id FROM cohorte ORDER BY cohorte_id DESC LIMIT 1),
        (SELECT grupo_academico_id FROM grupo_academico ORDER BY grupo_academico_id LIMIT 1),
-       'aspirante.demo@bfa-demo.local', 'ACTIVO', now() AT TIME ZONE 'UTC';
+       'ACTIVO', now() AT TIME ZONE 'UTC';
 
 INSERT INTO sesion_aplicacion (sesion_aplicacion_id, version_test_id, codigo_sesion, nombre_sesion, descripcion,
                                inicio_programado, fin_programado, inicio_real, ubicacion, estado, creado_por, creado_en)
