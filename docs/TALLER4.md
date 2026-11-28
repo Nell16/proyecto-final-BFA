@@ -389,7 +389,14 @@ Decisiones clave: las versiones de test son inmutables una vez publicadas (un ca
 
 - `backend/supabase/seed_real/01_instrumentos_bfa_weill.sql`: BFA real (99 reactivos, claves y normas nacionales 1992).
 - `backend/supabase/seed_real/03_weill_v103_borrador.sql`: Weill (60 reactivos, clave y baremos UN) cargado como BORRADOR para poder adjuntar las laminas; la version 102 sin imagenes queda RETIRADA.
-- `backend/supabase/seed_real/04_publicar_weill.sql`: publica la version 103 una vez subidas las imagenes (`POST /items/{id}/images`).
+- `backend/supabase/seed_real/04_publicar_weill.sql`: alternativa en SQL para publicar la version 103. En produccion se publico por la propia API (`POST /test-versions/103/approve` y `POST /test-versions/103/publish`), despues de subir las 60 laminas con `POST /items/{id}/images` (rol ENUNCIADO, una por reactivo).
 - `backend/supabase/seed_real/02_sesion_demostracion.sql`: aspirante de prueba y dos sesiones. Volver a ejecutarlo reinicia la demo.
 
 Accesos de aspirante: `/evaluacion/10001-ASPIRANTE2026` (BFA) y `/evaluacion/10002-WEILL2026` (Weill).
+
+### Verificacion realizada (27/11/2026)
+
+- Las 60 laminas del Weill responden en `GET /items/{id}/images` (exactamente una por reactivo). Las imagenes son material confidencial de prueba: estan solo en el almacenamiento privado y no en el repositorio.
+- Recorrido completo como aspirante en Weill: validar acceso, iniciar intento, abrir el subtest NV (60 reactivos con su lamina), responder, finalizar y calificar con `POST /attempts/{id}/score`. Resultado esperado y obtenido: 50 correctas y 10 incorrectas.
+- BFA verificado antes con el mismo recorrido.
+- Al terminar se volvio a ejecutar `02_sesion_demostracion.sql`, asi que ambos accesos de aspirante quedan sin usar.
